@@ -3,16 +3,10 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
-import {
-  Code2, Zap, Users, Award, Coffee, Globe,
-} from "lucide-react";
+import { Icon } from "@iconify/react";
 import Image from "next/image";
 
-const iconMap: Record<string, React.ElementType> = {
-  Code2, Zap, Users, Award, Coffee, Globe,
-};
-
-interface Stat { icon: string; value: string; label: string; }
+interface Stat { icon: string; number: string; suffix: string; label: string; }
 interface Highlight { icon: string; title: string; desc: string; }
 
 interface AboutData {
@@ -24,16 +18,16 @@ interface AboutData {
 }
 
 const defaultStats: Stat[] = [
-  { icon: "Code2", value: "50+", label: "Projects Built" },
-  { icon: "Coffee", value: "3+", label: "Years Experience" },
-  { icon: "Users", value: "20+", label: "Happy Clients" },
-  { icon: "Globe", value: "10+", label: "Countries Reached" },
+  { icon: "lucide:code-2", number: "50", suffix: "+", label: "Projects Built" },
+  { icon: "lucide:coffee", number: "3", suffix: "+", label: "Years Experience" },
+  { icon: "lucide:users", number: "20", suffix: "+", label: "Happy Clients" },
+  { icon: "lucide:globe", number: "10", suffix: "+", label: "Countries Reached" },
 ];
 
 const defaultHighlights: Highlight[] = [
-  { icon: "Zap", title: "Performance First", desc: "I optimize every byte for lightning-fast load times and smooth interactions." },
-  { icon: "Code2", title: "Clean Code", desc: "Readable, maintainable, and well-documented code is my standard." },
-  { icon: "Award", title: "Best Practices", desc: "Accessibility, SEO, and security are built in from the start." },
+  { icon: "lucide:zap", title: "Performance First", desc: "I optimize every byte for lightning-fast load times and smooth interactions." },
+  { icon: "lucide:code-2", title: "Clean Code", desc: "Readable, maintainable, and well-documented code is my standard." },
+  { icon: "lucide:award", title: "Best Practices", desc: "Accessibility, SEO, and security are built in from the start." },
 ];
 
 const defaultBio = [
@@ -54,7 +48,7 @@ export function About() {
   });
 
   useEffect(() => {
-    fetch("/api/about")
+    fetch("/api/about", { cache: "no-store" })
       .then((r) => r.json())
       .then((json: AboutData) => {
         if (!json?.name) return;
@@ -106,26 +100,23 @@ export function About() {
 
             {/* Highlights */}
             <div className="mt-8 space-y-4">
-              {data.highlights.map((item, i) => {
-                const Icon = iconMap[item.icon] ?? Zap;
-                return (
-                  <motion.div
-                    key={item.title}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={isInView ? { opacity: 1, x: 0 } : {}}
-                    transition={{ duration: 0.5, delay: 0.4 + i * 0.1 }}
-                    className="flex items-start gap-4 p-4 rounded-xl border border-[var(--border)] hover:border-indigo-500/30 transition-colors duration-200 group"
-                  >
-                    <div className="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-500/20 transition-colors duration-200">
-                      <Icon size={18} className="text-indigo-400" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-[var(--foreground)] mb-1">{item.title}</h3>
-                      <p className="text-sm text-[var(--muted)]">{item.desc}</p>
-                    </div>
-                  </motion.div>
-                );
-              })}
+              {data.highlights.map((item, i) => (
+                <motion.div
+                  key={item.title}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={isInView ? { opacity: 1, x: 0 } : {}}
+                  transition={{ duration: 0.5, delay: 0.4 + i * 0.1 }}
+                  className="flex items-start gap-4 p-4 rounded-xl border border-[var(--border)] hover:border-indigo-500/30 transition-colors duration-200 group"
+                >
+                  <div className="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-500/20 transition-colors duration-200">
+                    <Icon icon={item.icon} className="text-xl text-indigo-400" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-[var(--foreground)] mb-1">{item.title}</h3>
+                    <p className="text-sm text-[var(--muted)]">{item.desc}</p>
+                  </div>
+                </motion.div>
+              ))}
             </div>
           </motion.div>
 
@@ -143,12 +134,14 @@ export function About() {
                 whileHover={{ scale: 1.03 }}
                 transition={{ duration: 0.3 }}
               >
-                <Image
-                  src={data.profileImage2}
-                  alt={data.name}
-                  fill
-                  className="object-cover object-top"
-                />
+                {(data.profileImage2 || "/profile1.jpg") && (
+                  <Image
+                    src={data.profileImage2 || "/profile1.jpg"}
+                    alt={data.name || "Profile"}
+                    fill
+                    className="object-cover object-top"
+                  />
+                )}
               </motion.div>
               <div className="absolute -inset-3 rounded-2xl border border-indigo-500/10 -z-10" />
               <div className="absolute -inset-6 rounded-2xl border border-purple-500/5 -z-20" />
@@ -160,22 +153,21 @@ export function About() {
 
             {/* Stats grid */}
             <div className="grid grid-cols-2 gap-4 w-full max-w-sm">
-              {data.stats.map((stat, i) => {
-                const Icon = iconMap[stat.icon] ?? Code2;
-                return (
-                  <motion.div
-                    key={stat.label}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={isInView ? { opacity: 1, scale: 1 } : {}}
-                    transition={{ duration: 0.5, delay: 0.5 + i * 0.1 }}
-                    className="p-4 rounded-xl border border-[var(--border)] bg-[var(--card)] text-center hover:border-indigo-500/30 transition-colors duration-200 group"
-                  >
-                    <Icon size={20} className="text-indigo-400 mx-auto mb-2 group-hover:scale-110 transition-transform duration-200" />
-                    <div className="text-2xl font-bold gradient-text">{stat.value}</div>
-                    <div className="text-xs text-[var(--muted)] mt-1">{stat.label}</div>
-                  </motion.div>
-                );
-              })}
+              {data.stats.map((stat, i) => (
+                <motion.div
+                  key={stat.label}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={isInView ? { opacity: 1, scale: 1 } : {}}
+                  transition={{ duration: 0.5, delay: 0.5 + i * 0.1 }}
+                  className="p-4 rounded-xl border border-[var(--border)] bg-[var(--card)] text-center hover:border-indigo-500/30 transition-colors duration-200 group"
+                >
+                  <div className="mb-2 group-hover:scale-110 transition-transform duration-200">
+                    <Icon icon={stat.icon} className="text-2xl text-indigo-400 mx-auto" />
+                  </div>
+                  <div className="text-2xl font-bold gradient-text">{stat.number}{stat.suffix}</div>
+                  <div className="text-xs text-[var(--muted)] mt-1">{stat.label}</div>
+                </motion.div>
+              ))}
             </div>
           </motion.div>
         </div>

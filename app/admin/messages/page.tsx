@@ -125,9 +125,8 @@ export default function MessagesAdminPage() {
                 <button
                   key={msg._id}
                   onClick={() => handleSelect(msg)}
-                  className={`w-full text-left p-4 border-b border-gray-800/60 transition-colors hover:bg-gray-800/40 ${
-                    selected?._id === msg._id ? "bg-indigo-500/10 border-l-2 border-l-indigo-500" : ""
-                  }`}
+                  className={`w-full text-left p-4 border-b border-gray-800/60 transition-colors hover:bg-gray-800/40 ${selected?._id === msg._id ? "bg-indigo-500/10 border-l-2 border-l-indigo-500" : ""
+                    }`}
                 >
                   <div className="flex items-start justify-between gap-2 mb-1">
                     <div className="flex items-center gap-1.5 min-w-0">

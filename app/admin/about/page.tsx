@@ -4,7 +4,8 @@ import { useEffect, useState, useCallback } from "react";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { ToastContainer, useToast } from "@/components/admin/Toast";
-import { Save, Plus, Trash2, ToggleLeft, ToggleRight } from "lucide-react";
+import { Save, Plus, Trash2, ToggleLeft, ToggleRight, ArrowUp, ArrowDown } from "lucide-react";
+import { Icon } from "@iconify/react";
 
 interface AboutData {
   name: string;
@@ -24,6 +25,8 @@ interface AboutData {
   floatingBadge1: string;
   floatingBadge2: string;
   statusBadge: string;
+  stats: { icon: string; number: string; suffix: string; label: string }[];
+  highlights: { icon: string; title: string; desc: string }[];
 }
 
 const defaultData: AboutData = {
@@ -48,9 +51,39 @@ const defaultData: AboutData = {
   floatingBadge1: "Next.js Dev",
   floatingBadge2: "Clean UI",
   statusBadge: "Open to opportunities",
+  stats: [
+    { icon: "lucide:code-2", number: "50", suffix: "+", label: "Projects Built" },
+    { icon: "lucide:coffee", number: "3", suffix: "+", label: "Years Experience" },
+    { icon: "lucide:users", number: "20", suffix: "+", label: "Happy Clients" },
+    { icon: "lucide:globe", number: "10", suffix: "+", label: "Countries Reached" },
+  ],
+  highlights: [
+    { icon: "lucide:zap", title: "Performance First", desc: "I optimize every byte for lightning-fast load times." },
+    { icon: "lucide:code-2", title: "Clean Code", desc: "Readable, maintainable, and well-documented code." },
+    { icon: "lucide:award", title: "Best Practices", desc: "Accessibility, SEO, and security are built in." },
+  ],
 };
 
+const PRESET_ICONS = [
+  { id: "lucide:zap", label: "Lightning / Fast" },
+  { id: "lucide:code-2", label: "Code / Dev" },
+  { id: "lucide:award", label: "Award / Quality" },
+  { id: "lucide:coffee", label: "Coffee / Experience" },
+  { id: "lucide:users", label: "Users / Clients" },
+  { id: "lucide:globe", label: "Globe / Worldwide" },
+  { id: "lucide:briefcase", label: "Briefcase / Work" },
+  { id: "lucide:cpu", label: "CPU / Tech" },
+  { id: "lucide:layers", label: "Layers / Design" },
+  { id: "lucide:shield-check", label: "Shield / Security" },
+  { id: "lucide:terminal", label: "Terminal / CLI" },
+  { id: "lucide:heart", label: "Heart / Passion" },
+  { id: "lucide:star", label: "Star / Featured" },
+  { id: "lucide:book-open", label: "Book / Learning" },
+  { id: "lucide:rocket", label: "Rocket / Launch" },
+];
+
 const inputCls = "w-full px-3 py-2.5 rounded-xl border border-gray-700 bg-gray-800/50 text-white placeholder-gray-600 text-sm focus:outline-none focus:border-indigo-500/60 focus:ring-2 focus:ring-indigo-500/15 transition-all";
+const selectCls = "w-full px-3 py-2.5 rounded-xl border border-gray-700 bg-gray-800 text-white text-sm focus:outline-none focus:border-indigo-500/60 transition-all cursor-pointer hover:bg-gray-700 font-medium";
 const labelCls = "block text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1.5";
 
 export default function AboutAdminPage() {
@@ -95,6 +128,34 @@ export default function AboutAdminPage() {
   const addBio = () => setData((p) => ({ ...p, bio: [...p.bio, ""] }));
   const removeBio = (i: number) =>
     setData((p) => ({ ...p, bio: p.bio.filter((_, idx) => idx !== i) }));
+
+  // Stats helpers
+  const updateStat = (i: number, key: keyof AboutData["stats"][0], v: string) =>
+    setData((p) => { const s = [...p.stats]; s[i] = { ...s[i], [key]: v }; return { ...p, stats: s }; });
+  const addStat = () => setData((p) => ({ ...p, stats: [...p.stats, { icon: "lucide:zap", number: "0", suffix: "+", label: "New Stat" }] }));
+  const removeStat = (i: number) => setData((p) => ({ ...p, stats: p.stats.filter((_, idx) => idx !== i) }));
+  const moveStat = (i: number, dir: number) => {
+    if (i + dir < 0 || i + dir >= data.stats.length) return;
+    setData(p => {
+      const s = [...p.stats];
+      [s[i], s[i + dir]] = [s[i + dir], s[i]];
+      return { ...p, stats: s };
+    });
+  };
+
+  // Highlight helpers
+  const updateHighlight = (i: number, key: keyof AboutData["highlights"][0], v: string) =>
+    setData((p) => { const h = [...p.highlights]; h[i] = { ...h[i], [key]: v }; return { ...p, highlights: h }; });
+  const addHighlight = () => setData((p) => ({ ...p, highlights: [...p.highlights, { icon: "lucide:zap", title: "New Feature", desc: "Description here" }] }));
+  const removeHighlight = (i: number) => setData((p) => ({ ...p, highlights: p.highlights.filter((_, idx) => idx !== i) }));
+  const moveHighlight = (i: number, dir: number) => {
+    if (i + dir < 0 || i + dir >= data.highlights.length) return;
+    setData(p => {
+      const h = [...p.highlights];
+      [h[i], h[i + dir]] = [h[i + dir], h[i]];
+      return { ...p, highlights: h };
+    });
+  };
 
   if (loading) return (
     <>
@@ -177,6 +238,87 @@ export default function AboutAdminPage() {
                 <input className={inputCls} value={data.emailAddress} onChange={(e) => set("emailAddress", e.target.value)} /></div>
               <div><label className={labelCls}>Resume / CV URL</label>
                 <input className={inputCls} value={data.resumeUrl} onChange={(e) => set("resumeUrl", e.target.value)} placeholder="https://..." /></div>
+            </div>
+          </section>
+          {/* Stats */}
+          <section className="bg-gray-900 border border-gray-800 rounded-2xl p-6 space-y-4">
+            <h2 className="font-semibold text-white text-sm border-b border-gray-800 pb-3">Professional Stats</h2>
+            <div className="grid sm:grid-cols-2 gap-4">
+              {data.stats.map((stat, i) => (
+                <div key={i} className="p-4 rounded-xl border border-gray-800 bg-gray-800/20 space-y-3 relative group">
+                  <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                    <button onClick={() => moveStat(i, -1)} disabled={i === 0} className="p-1 text-gray-600 hover:text-white disabled:opacity-20"><ArrowUp size={12} /></button>
+                    <button onClick={() => moveStat(i, 1)} disabled={i === data.stats.length - 1} className="p-1 text-gray-600 hover:text-white disabled:opacity-20"><ArrowDown size={12} /></button>
+                    <button onClick={() => removeStat(i)} className="p-1 text-gray-600 hover:text-red-400"><Trash2 size={12} /></button>
+                  </div>
+                  <div className="flex gap-4 items-end">
+                    <div className="w-12 h-12 rounded-lg bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
+                      <Icon icon={stat.icon} className="text-xl text-indigo-400" />
+                    </div>
+                    <div className="flex-1">
+                      <label className={labelCls}>Choose Icon</label>
+                      <select className={selectCls} value={stat.icon} onChange={(e) => updateStat(i, "icon", e.target.value)}>
+                        {PRESET_ICONS.map(opt => <option key={opt.id} value={opt.id}>{opt.label}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="col-span-2">
+                      <label className={labelCls}>Number (e.g. 50)</label>
+                      <input className={inputCls} value={stat.number} onChange={(e) => updateStat(i, "number", e.target.value)} />
+                    </div>
+                    <div>
+                      <label className={labelCls}>Suffix (+)</label>
+                      <input className={inputCls} value={stat.suffix} onChange={(e) => updateStat(i, "suffix", e.target.value)} />
+                    </div>
+                  </div>
+                  <div>
+                    <label className={labelCls}>Label (e.g. Projects Built)</label>
+                    <input className={inputCls} value={stat.label} onChange={(e) => updateStat(i, "label", e.target.value)} />
+                  </div>
+                </div>
+              ))}
+              <button onClick={addStat} className="h-full min-h-[160px] flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gray-800 hover:border-indigo-500/50 text-gray-600 hover:text-indigo-400 transition-all">
+                <Plus size={24} /> <span className="text-xs font-bold uppercase tracking-wider">Add Stat</span>
+              </button>
+            </div>
+          </section>
+
+          {/* Highlights */}
+          <section className="bg-gray-900 border border-gray-800 rounded-2xl p-6 space-y-4">
+            <h2 className="font-semibold text-white text-sm border-b border-gray-800 pb-3">Performance Highlights</h2>
+            <div className="space-y-4">
+              {data.highlights.map((item, i) => (
+                <div key={i} className="p-4 rounded-xl border border-gray-800 bg-gray-800/20 space-y-3 relative group">
+                  <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                    <button onClick={() => moveHighlight(i, -1)} disabled={i === 0} className="p-1 text-gray-600 hover:text-white disabled:opacity-20"><ArrowUp size={12} /></button>
+                    <button onClick={() => moveHighlight(i, 1)} disabled={i === data.highlights.length - 1} className="p-1 text-gray-600 hover:text-white disabled:opacity-20"><ArrowDown size={12} /></button>
+                    <button onClick={() => removeHighlight(i)} className="p-1 text-gray-600 hover:text-red-400"><Trash2 size={12} /></button>
+                  </div>
+                  <div className="flex gap-4 items-end">
+                    <div className="w-12 h-12 rounded-lg bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
+                      <Icon icon={item.icon} className="text-xl text-indigo-400" />
+                    </div>
+                    <div className="flex-1">
+                      <label className={labelCls}>Choose Icon</label>
+                      <select className={selectCls} value={item.icon} onChange={(e) => updateHighlight(i, "icon", e.target.value)}>
+                        {PRESET_ICONS.map(opt => <option key={opt.id} value={opt.id}>{opt.label}</option>)}
+                      </select>
+                    </div>
+                    <div className="sm:col-span-2 flex-1">
+                      <label className={labelCls}>Title</label>
+                      <input className={inputCls} value={item.title} onChange={(e) => updateHighlight(i, "title", e.target.value)} />
+                    </div>
+                  </div>
+                  <div>
+                    <label className={labelCls}>Description</label>
+                    <textarea rows={2} className={`${inputCls} resize-none`} value={item.desc} onChange={(e) => updateHighlight(i, "desc", e.target.value)} />
+                  </div>
+                </div>
+              ))}
+              <button onClick={addHighlight} className="w-full py-4 flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gray-800 hover:border-indigo-500/50 text-gray-600 hover:text-indigo-400 transition-all">
+                <Plus size={20} /> <span className="text-xs font-bold uppercase tracking-wider">Add Highlight</span>
+              </button>
             </div>
           </section>
 

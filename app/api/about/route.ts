@@ -3,14 +3,19 @@ import { getDatabases, DATABASE_ID, COLLECTIONS, Query, normalise, parseJson } f
 import { requireAuth, unauthorizedResponse } from "@/lib/auth";
 
 function deserialise(doc: Record<string, unknown>) {
-  const extra = parseJson<Record<string, unknown>>(doc.extraData as string, {});
+  const extra = parseJson<Record<string, any>>(doc.extraData as string, {});
   return {
     ...normalise(doc as Parameters<typeof normalise>[0]),
     bio: parseJson<string[]>(doc.bio as string, []),
-    stats: parseJson(extra.stats as string | undefined, []),
-    highlights: parseJson(extra.highlights as string | undefined, []),
+    stats: Array.isArray(extra.stats) ? extra.stats : [],
+    highlights: Array.isArray(extra.highlights) ? extra.highlights : [],
     githubUrl: (extra.githubUrl as string) ?? "",
     linkedinUrl: (extra.linkedinUrl as string) ?? "",
+    emailAddress: (extra.emailAddress as string) ?? "",
+    resumeUrl: (extra.resumeUrl as string) ?? "",
+    profileImage2: (extra.profileImage2 as string) ?? "",
+    floatingBadge1: (extra.floatingBadge1 as string) ?? "",
+    floatingBadge2: (extra.floatingBadge2 as string) ?? "",
     statusBadge: (extra.statusBadge as string) ?? "Open to opportunities",
   };
 }
@@ -36,9 +41,17 @@ export async function PUT(req: NextRequest) {
     const db = getDatabases();
 
     // Separate fields that go into extraData
-    const { githubUrl, linkedinUrl, statusBadge, stats, highlights, _id, createdAt, updatedAt, ...rest } = body;
+    const {
+      githubUrl, linkedinUrl, statusBadge, stats, highlights,
+      floatingBadge1, floatingBadge2, emailAddress, resumeUrl, profileImage2,
+      _id, createdAt, updatedAt, ...rest
+    } = body;
 
-    const extraData = JSON.stringify({ githubUrl, linkedinUrl, statusBadge, stats, highlights });
+    const extraData = JSON.stringify({
+      githubUrl, linkedinUrl, statusBadge, stats, highlights,
+      floatingBadge1, floatingBadge2, emailAddress, resumeUrl, profileImage2
+    });
+
     const payload = {
       ...rest,
       bio: Array.isArray(rest.bio) ? JSON.stringify(rest.bio) : rest.bio,

@@ -10,7 +10,11 @@ function deserialiseCategory(doc: Record<string, unknown>) {
 }
 
 function deserialiseTechIcon(doc: Record<string, unknown>) {
-  return normalise(doc as Parameters<typeof normalise>[0]);
+  const normalised = normalise(doc as Parameters<typeof normalise>[0]);
+  return {
+    ...normalised,
+    icon: normalised.icon || normalised.symbol || "",
+  };
 }
 
 export async function GET() {
@@ -59,9 +63,12 @@ export async function PUT(req: NextRequest) {
       const existing = await db.listDocuments(DATABASE_ID, COLLECTIONS.TECH_ICONS, [Query.limit(100)]);
       await Promise.all(existing.documents.map((d) => db.deleteDocument(DATABASE_ID, COLLECTIONS.TECH_ICONS, d.$id)));
       await Promise.all(
-        techIcons.map((icon: Record<string, unknown>) => {
-          const { _id, createdAt, updatedAt, ...rest } = icon;
-          return db.createDocument(DATABASE_ID, COLLECTIONS.TECH_ICONS, ID.unique(), rest);
+        techIcons.map((iconData: any) => {
+          const { _id, createdAt, updatedAt, icon, symbol, ...rest } = iconData;
+          return db.createDocument(DATABASE_ID, COLLECTIONS.TECH_ICONS, ID.unique(), {
+            ...rest,
+            symbol: icon || symbol || "", // Map frontend 'icon' back to database 'symbol'
+          });
         })
       );
     }

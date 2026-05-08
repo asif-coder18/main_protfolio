@@ -33,20 +33,26 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     const body = await req.json();
     const db = getDatabases();
 
-    const { _id, createdAt, updatedAt, ...rest } = body;
     const payload = {
-      ...rest,
-      tags: Array.isArray(rest.tags) ? JSON.stringify(rest.tags) : rest.tags ?? "[]",
-      keyFocus: Array.isArray(rest.keyFocus) ? JSON.stringify(rest.keyFocus) : rest.keyFocus ?? "[]",
+      type: body.type || "work",
+      title: body.title,
+      company: body.company,
+      location: body.location || "",
+      period: body.period || "",
+      description: body.description || "",
+      tags: Array.isArray(body.tags) ? JSON.stringify(body.tags) : "[]",
+      keyFocus: Array.isArray(body.keyFocus) ? JSON.stringify(body.keyFocus) : "[]",
+      current: !!body.current,
+      order: parseInt(body.order) || 0,
     };
 
     const doc = await db.updateDocument(DATABASE_ID, COLLECTIONS.EXPERIENCE, id, payload);
     return NextResponse.json(deserialise(doc as Record<string, unknown>));
-  } catch (err: unknown) {
-    const e = err as { code?: number };
+  } catch (err: any) {
+    const e = err as { code?: number; message?: string };
     if (e?.code === 404) return NextResponse.json({ error: "Not found" }, { status: 404 });
-    console.error(err);
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+    console.error("Experience PUT Error:", e.message || err);
+    return NextResponse.json({ error: e.message || "Server error" }, { status: 500 });
   }
 }
 

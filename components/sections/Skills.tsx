@@ -2,15 +2,16 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
+import { Icon } from "@iconify/react";
 
 interface Skill { name: string; level: number; icon: string; }
-interface Category { title: string; color: string; order: number; skills: Skill[]; }
+interface Category { _id?: string; title: string; color: string; order: number; skills: Skill[]; }
 interface TechIcon { name: string; symbol: string; bg: string; text: string; order: number; }
 
 const defaultCategories: Category[] = [
   { title: "Frontend", color: "indigo", order: 0, skills: [
-    { name: "Next.js", level: 95, icon: "▲" }, { name: "React", level: 92, icon: "⚛" },
-    { name: "TypeScript", level: 88, icon: "TS" }, { name: "JavaScript", level: 93, icon: "JS" },
+    { name: "Next.js", level: 95, icon: "logos:nextjs-icon" }, { name: "React", level: 92, icon: "logos:react" },
+    { name: "TypeScript", level: 88, icon: "logos:typescript-icon" }, { name: "JavaScript", level: 93, icon: "logos:javascript" },
   ]},
   { title: "Styling", color: "purple", order: 1, skills: [
     { name: "Tailwind CSS", level: 95, icon: "🌊" }, { name: "CSS / SCSS", level: 90, icon: "🎨" },
@@ -23,14 +24,14 @@ const defaultCategories: Category[] = [
 ];
 
 const defaultTechIcons: TechIcon[] = [
-  { name: "HTML5", bg: "bg-orange-500/10", text: "text-orange-400", symbol: "HTML", order: 0 },
-  { name: "CSS3", bg: "bg-blue-500/10", text: "text-blue-400", symbol: "CSS", order: 1 },
-  { name: "JavaScript", bg: "bg-yellow-500/10", text: "text-yellow-400", symbol: "JS", order: 2 },
-  { name: "TypeScript", bg: "bg-blue-600/10", text: "text-blue-500", symbol: "TS", order: 3 },
-  { name: "React", bg: "bg-cyan-500/10", text: "text-cyan-400", symbol: "⚛", order: 4 },
-  { name: "Next.js", bg: "bg-gray-500/10", text: "text-gray-300", symbol: "▲", order: 5 },
-  { name: "Tailwind", bg: "bg-teal-500/10", text: "text-teal-400", symbol: "TW", order: 6 },
-  { name: "Git", bg: "bg-red-500/10", text: "text-red-400", symbol: "GIT", order: 7 },
+  { name: "HTML5", bg: "bg-orange-500/10", text: "text-orange-400", symbol: "logos:html-5", order: 0 },
+  { name: "CSS3", bg: "bg-blue-500/10", text: "text-blue-400", symbol: "logos:css-3", order: 1 },
+  { name: "JavaScript", bg: "bg-yellow-500/10", text: "text-yellow-400", symbol: "logos:javascript", order: 2 },
+  { name: "TypeScript", bg: "bg-blue-600/10", text: "text-blue-500", symbol: "logos:typescript-icon", order: 3 },
+  { name: "React", bg: "bg-cyan-500/10", text: "text-cyan-400", symbol: "logos:react", order: 4 },
+  { name: "Next.js", bg: "bg-gray-500/10", text: "text-gray-300", symbol: "logos:nextjs-icon", order: 5 },
+  { name: "Tailwind", bg: "bg-teal-500/10", text: "text-teal-400", symbol: "logos:tailwindcss-icon", order: 6 },
+  { name: "Git", bg: "bg-red-500/10", text: "text-red-400", symbol: "logos:git-icon", order: 7 },
 ];
 
 const colorMap: Record<string, { bar: string; glow: string; badge: string }> = {
@@ -46,6 +47,9 @@ const colorMap: Record<string, { bar: string; glow: string; badge: string }> = {
   red: { bar: "bg-red-500", glow: "shadow-red-500/30", badge: "bg-red-500/10 text-red-400 border-red-500/20" },
 };
 
+// Helper to check if string is an Iconify name
+const isIconify = (icon: string) => icon && icon.includes(":");
+
 function SkillBar({ name, level, icon, color, delay, isInView }: {
   name: string; level: number; icon: string; color: string; delay: number; isInView: boolean;
 }) {
@@ -54,7 +58,13 @@ function SkillBar({ name, level, icon, color, delay, isInView }: {
     <div className="group">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <span className="text-sm">{icon}</span>
+          <div className="w-5 h-5 flex items-center justify-center">
+            {isIconify(icon) ? (
+              <Icon icon={icon} className="w-full h-full" />
+            ) : (
+              <span className="text-sm">{icon}</span>
+            )}
+          </div>
           <span className="text-sm font-medium text-[var(--foreground)]">{name}</span>
         </div>
         <span className="text-xs font-semibold text-[var(--muted)]">{level}%</span>
@@ -115,14 +125,20 @@ export function Skills() {
         >
           {techIcons.map((tech, i) => (
             <motion.div
-              key={tech.name}
+              key={tech.name + i}
               initial={{ opacity: 0, scale: 0.8 }}
               animate={isInView ? { opacity: 1, scale: 1 } : {}}
               transition={{ duration: 0.4, delay: 0.3 + i * 0.05 }}
               whileHover={{ scale: 1.1, y: -3 }}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl border ${tech.bg} ${tech.text} border-current/20 text-sm font-semibold cursor-default`}
             >
-              <span className="text-base">{tech.symbol}</span>
+              <div className="w-5 h-5 flex items-center justify-center">
+                {isIconify(tech.symbol) ? (
+                  <Icon icon={tech.symbol} className="w-full h-full" />
+                ) : (
+                  <span className="text-base">{tech.symbol}</span>
+                )}
+              </div>
               <span>{tech.name}</span>
             </motion.div>
           ))}
@@ -134,7 +150,7 @@ export function Skills() {
             const colors = colorMap[category.color] ?? colorMap.indigo;
             return (
               <motion.div
-                key={category.title}
+                key={category._id || `cat-${catIdx}-${category.title}`}
                 initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.6, delay: 0.4 + catIdx * 0.15 }}

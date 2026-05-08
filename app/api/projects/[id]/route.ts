@@ -32,19 +32,27 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     const body = await req.json();
     const db = getDatabases();
 
-    const { _id, createdAt, updatedAt, ...rest } = body;
     const payload = {
-      ...rest,
-      tags: Array.isArray(rest.tags) ? JSON.stringify(rest.tags) : rest.tags ?? "[]",
+      title: body.title,
+      description: body.description || "",
+      image: (body.image || "🚀").slice(0, 10),
+      imageUrl: body.imageUrl || "",
+      gradient: body.gradient || "",
+      tags: Array.isArray(body.tags) ? JSON.stringify(body.tags) : "[]",
+      live: body.live || "",
+      github: body.github || "",
+      featured: !!body.featured,
+      stars: parseInt(body.stars) || 0,
+      order: parseInt(body.order) || 0,
     };
 
     const doc = await db.updateDocument(DATABASE_ID, COLLECTIONS.PROJECTS, id, payload);
     return NextResponse.json(deserialise(doc as Record<string, unknown>));
-  } catch (err: unknown) {
-    const e = err as { code?: number };
+  } catch (err: any) {
+    const e = err as { code?: number; message?: string };
     if (e?.code === 404) return NextResponse.json({ error: "Not found" }, { status: 404 });
-    console.error(err);
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+    console.error("Project PUT Error:", e.message || err);
+    return NextResponse.json({ error: e.message || "Server error" }, { status: 500 });
   }
 }
 

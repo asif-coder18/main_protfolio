@@ -44,7 +44,7 @@ export function Hero() {
   const [data, setData] = useState<Required<AboutData>>(defaults);
 
   useEffect(() => {
-    fetch("/api/about")
+    fetch("/api/about", { cache: "no-store" })
       .then((r) => r.json())
       .then((json) => { if (json && json.name) setData({ ...defaults, ...json }); })
       .catch(() => {});
@@ -129,9 +129,9 @@ export function Hero() {
               transition={{ duration: 0.7, delay: 0.1 }}
               className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-4 leading-tight"
             >
-              <span className="gradient-text">{data.name.split(" ")[0]}</span>
+              <span className="gradient-text">{(data.name || "Asiful").split(" ")[0]}</span>
               <br />
-              <span className="text-[var(--foreground)]">{data.name.split(" ").slice(1).join(" ")}</span>
+              <span className="text-[var(--foreground)]">{(data.name || "").split(" ").slice(1).join(" ")}</span>
             </motion.h1>
 
             {/* Title */}
@@ -250,13 +250,15 @@ export function Hero() {
 
               {/* Photo container */}
               <div className="relative w-64 h-64 sm:w-72 sm:h-72 lg:w-80 lg:h-80 rounded-full overflow-hidden border-4 border-[var(--background)] bg-gradient-to-br from-indigo-500/20 via-purple-500/20 to-pink-500/20">
-                <Image
-                  src={data.profileImage}
-                  alt={data.name}
-                  fill
-                  className="object-cover object-top"
-                  priority
-                />
+                {(data.profileImage || "/profile.jpg") && (
+                  <Image
+                    src={data.profileImage || "/profile.jpg"}
+                    alt={data.name || "Profile"}
+                    fill
+                    className="object-cover object-top"
+                    priority
+                  />
+                )}
               </div>
 
               {/* Status badge */}

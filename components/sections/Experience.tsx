@@ -60,6 +60,23 @@ export function Experience() {
       .catch(() => {});
   }, []);
 
+  const formatPeriod = (periodStr: string) => {
+    try {
+      const p = JSON.parse(periodStr);
+      const formatMonth = (dateStr: string) => {
+        if (!dateStr) return "";
+        const [year, month] = dateStr.split("-");
+        const date = new Date(parseInt(year), parseInt(month) - 1);
+        return date.toLocaleString("en-US", { month: "long", year: "numeric" });
+      };
+      const start = formatMonth(p.start);
+      const end = p.current ? "Present" : formatMonth(p.end);
+      return start ? `${start} – ${end}` : periodStr;
+    } catch {
+      return periodStr;
+    }
+  };
+
   return (
     <section
       id="experience"
@@ -155,7 +172,7 @@ export function Experience() {
                         {exp.period && (
                           <span className="flex items-center gap-1">
                             <Calendar size={11} />
-                            {exp.period}
+                            {formatPeriod(exp.period)}
                           </span>
                         )}
                         {exp.location && (
