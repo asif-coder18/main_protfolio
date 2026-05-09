@@ -51,8 +51,8 @@ export async function POST(req: NextRequest) {
     await setAuthCookie(token);
 
     return NextResponse.json({ success: true, username: adminDoc.username });
-  } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+  } catch (err: any) {
+    console.error("Login Error:", err);
+    return NextResponse.json({ error: err.message || "Server error" }, { status: 500 });
   }
 }
