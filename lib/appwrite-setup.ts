@@ -168,8 +168,8 @@ async function setup() {
   await createAttr(() => databases.createStringAttribute(DATABASE_ID, "loader_settings", "bgGradient", 500, false, ""), "bgGradient");
   await createAttr(() => databases.createStringAttribute(DATABASE_ID, "loader_settings", "backgroundStyle", 50, false, "none"), "backgroundStyle");
   await createAttr(() => databases.createStringAttribute(DATABASE_ID, "loader_settings", "imageShape", 50, false, "rounded-2xl"), "imageShape");
-  await createAttr(() => databases.createIntegerAttribute(DATABASE_ID, "loader_settings", "imageSize", false, null, null, 120), "imageSize");
-  await createAttr(() => databases.createIntegerAttribute(DATABASE_ID, "loader_settings", "duration", false, null, null, 2000), "duration");
+  await createAttr(() => databases.createIntegerAttribute(DATABASE_ID, "loader_settings", "imageSize", false, undefined, undefined, 120), "imageSize");
+  await createAttr(() => databases.createIntegerAttribute(DATABASE_ID, "loader_settings", "duration", false, undefined, undefined, 2000), "duration");
   await createAttr(() => databases.createBooleanAttribute(DATABASE_ID, "loader_settings", "showProgressBar", false, true), "showProgressBar");
   await createAttr(() => databases.createBooleanAttribute(DATABASE_ID, "loader_settings", "showPercentage", false, false), "showPercentage");
   await createAttr(() => databases.createBooleanAttribute(DATABASE_ID, "loader_settings", "allowSkip", false, false), "allowSkip");
