@@ -15,6 +15,8 @@ export const COLLECTIONS = {
   PROJECTS: "projects",
   SKILL_CATEGORIES: "skill_categories",
   TECH_ICONS: "tech_icons",
+  LOADER_SETTINGS: "loader_settings",
+  BRAND_SETTINGS: "brand_settings",
 } as const;
 
 export const STORAGE_BUCKET_ID = "portfolio_uploads";

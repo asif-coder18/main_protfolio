@@ -66,9 +66,10 @@ interface IconPickerProps {
   onSelect: (icon: string) => void;
   onClose: () => void;
   selectedIcon?: string;
+  title?: string;
 }
 
-export function IconPicker({ onSelect, onClose, selectedIcon }: IconPickerProps) {
+export function IconPicker({ onSelect, onClose, selectedIcon, title = "Select Icon" }: IconPickerProps) {
   const [search, setSearch] = useState("");
 
   const filteredIcons = useMemo(() => {
@@ -82,7 +83,7 @@ export function IconPicker({ onSelect, onClose, selectedIcon }: IconPickerProps)
       <div className="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[80vh] animate-in zoom-in-95 duration-200">
         {/* Header */}
         <div className="p-4 border-b border-gray-800 flex items-center justify-between">
-          <h3 className="text-lg font-bold text-white">Select Technology Icon</h3>
+          <h3 className="text-lg font-bold text-white">{title}</h3>
           <button 
             onClick={onClose}
             className="p-2 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition-colors"

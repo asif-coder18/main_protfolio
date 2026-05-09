@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Code2, Heart, ArrowUp, Mail, Link as LinkIcon } from "lucide-react";
 import { GithubIcon, LinkedinIcon, MailIcon } from "@/components/icons/SocialIcons";
 import { useState, useEffect } from "react";
+import { Icon } from "@iconify/react";
 
 interface SocialLink {
   label: string;
@@ -43,6 +44,7 @@ const defaultSocial = [
 
 export function Footer() {
   const [socialLinks, setSocialLinks] = useState<any[]>(defaultSocial);
+  const [brand, setBrand] = useState<any>(null);
 
   useEffect(() => {
     fetch("/api/contact-info")
@@ -52,7 +54,14 @@ export function Footer() {
           setSocialLinks(json.socialLinks);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
+
+    fetch("/api/branding")
+      .then(res => res.json())
+      .then(data => {
+        if (!data.error) setBrand(data);
+      })
+      .catch(console.error);
   }, []);
 
   const scrollToTop = () => {
@@ -71,10 +80,30 @@ export function Footer() {
           {/* Brand */}
           <div className="sm:col-span-1">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center">
-                <Code2 size={16} className="text-white" />
+              <div 
+                className="rounded-lg flex items-center justify-center overflow-hidden"
+                style={{ 
+                  width: 32, 
+                  height: 32,
+                  backgroundColor: brand?.logoType === "image" ? "transparent" : (brand?.brandColor || "#6366f1")
+                }}
+              >
+                {brand?.logoType === "image" && brand?.logoImage ? (
+                  <img 
+                    src={brand.logoImage} 
+                    alt="Logo" 
+                    className="w-5 h-5 object-contain"
+                  />
+                ) : (
+                  <Icon 
+                    icon={brand?.icon || "lucide:code-2"} 
+                    width={16} 
+                    height={16} 
+                    className="text-white" 
+                  />
+                )}
               </div>
-              <span className="font-bold text-lg gradient-text">Abir.dev</span>
+              <span className="font-bold text-lg gradient-text">{brand?.logoText || brand?.brandName || "Abir.dev"}</span>
             </div>
             <p className="text-sm text-[var(--muted)] leading-relaxed max-w-xs">
               Frontend developer crafting fast, responsive, and user-friendly

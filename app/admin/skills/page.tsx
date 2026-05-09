@@ -131,6 +131,7 @@ export default function SkillsAdminPage() {
 
       {pickerOpen && pickerConfig && (
         <IconPicker 
+          title="Select Technology Icon"
           selectedIcon={pickerConfig.type === "skill" 
             ? categories[pickerConfig.ci!].skills[pickerConfig.si!].icon 
             : techIcons[pickerConfig.bi!].icon

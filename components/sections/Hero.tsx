@@ -47,7 +47,7 @@ export function Hero() {
     fetch("/api/about", { cache: "no-store" })
       .then((r) => r.json())
       .then((json) => { if (json && json.name) setData({ ...defaults, ...json }); })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   const scrollToSection = (href: string, subject?: string) => {

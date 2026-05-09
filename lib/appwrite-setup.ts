@@ -154,6 +154,40 @@ async function setup() {
   await createAttr(() => databases.createStringAttribute(DATABASE_ID, "tech_icons", "text", 100, false, "text-indigo-400"), "text");
   await createAttr(() => databases.createIntegerAttribute(DATABASE_ID, "tech_icons", "order", false, 0), "order");
 
+  // ── LOADER SETTINGS ──────────────────────────────────────────────────────────
+  await createCollection("loader_settings", "Loader Settings");
+  await createAttr(() => databases.createStringAttribute(DATABASE_ID, "loader_settings", "name", 255, true), "name");
+  await createAttr(() => databases.createStringAttribute(DATABASE_ID, "loader_settings", "title", 255, false, "Asiful Maula Abir"), "title");
+  await createAttr(() => databases.createStringAttribute(DATABASE_ID, "loader_settings", "subtitle", 255, false, "Frontend Developer"), "subtitle");
+  await createAttr(() => databases.createStringAttribute(DATABASE_ID, "loader_settings", "subtitleColor", 50, false, "#9ca3af"), "subtitleColor");
+  await createAttr(() => databases.createStringAttribute(DATABASE_ID, "loader_settings", "subtitleSize", 20, false, "sm"), "subtitleSize");
+  await createAttr(() => databases.createStringAttribute(DATABASE_ID, "loader_settings", "subtitleWeight", 20, false, "normal"), "subtitleWeight");
+  await createAttr(() => databases.createStringAttribute(DATABASE_ID, "loader_settings", "imageUrl", 1000, false, "/profile.jpg"), "imageUrl");
+  await createAttr(() => databases.createStringAttribute(DATABASE_ID, "loader_settings", "loaderType", 50, false, "progress-bar"), "loaderType");
+  await createAttr(() => databases.createStringAttribute(DATABASE_ID, "loader_settings", "progressColor", 50, false, "#8b5cf6"), "progressColor");
+  await createAttr(() => databases.createStringAttribute(DATABASE_ID, "loader_settings", "bgGradient", 500, false, ""), "bgGradient");
+  await createAttr(() => databases.createStringAttribute(DATABASE_ID, "loader_settings", "backgroundStyle", 50, false, "none"), "backgroundStyle");
+  await createAttr(() => databases.createStringAttribute(DATABASE_ID, "loader_settings", "imageShape", 50, false, "rounded-2xl"), "imageShape");
+  await createAttr(() => databases.createIntegerAttribute(DATABASE_ID, "loader_settings", "imageSize", false, null, null, 120), "imageSize");
+  await createAttr(() => databases.createIntegerAttribute(DATABASE_ID, "loader_settings", "duration", false, null, null, 2000), "duration");
+  await createAttr(() => databases.createBooleanAttribute(DATABASE_ID, "loader_settings", "showProgressBar", false, true), "showProgressBar");
+  await createAttr(() => databases.createBooleanAttribute(DATABASE_ID, "loader_settings", "showPercentage", false, false), "showPercentage");
+  await createAttr(() => databases.createBooleanAttribute(DATABASE_ID, "loader_settings", "allowSkip", false, false), "allowSkip");
+  await createAttr(() => databases.createStringAttribute(DATABASE_ID, "loader_settings", "customCss", 5000, false, ""), "customCss");
+  await createAttr(() => databases.createStringAttribute(DATABASE_ID, "loader_settings", "template", 50, false, "default"), "template");
+  await createAttr(() => databases.createBooleanAttribute(DATABASE_ID, "loader_settings", "isActive", false, false), "isActive");
+  await createAttr(() => databases.createIntegerAttribute(DATABASE_ID, "loader_settings", "order", false, 0), "order")
+
+  // ── BRAND SETTINGS ──────────────────────────────────────────────────────────
+  await createCollection("brand_settings", "Brand Settings");
+  await createAttr(() => databases.createStringAttribute(DATABASE_ID, "brand_settings", "brandName", 255, true), "brandName");
+  await createAttr(() => databases.createStringAttribute(DATABASE_ID, "brand_settings", "logoType", 20, false, "icon"), "logoType");
+  await createAttr(() => databases.createStringAttribute(DATABASE_ID, "brand_settings", "logoImage", 1000, false, ""), "logoImage");
+  await createAttr(() => databases.createStringAttribute(DATABASE_ID, "brand_settings", "icon", 100, false, "lucide:code-2"), "icon");
+  await createAttr(() => databases.createIntegerAttribute(DATABASE_ID, "brand_settings", "logoSize", false, 32), "logoSize");
+  await createAttr(() => databases.createStringAttribute(DATABASE_ID, "brand_settings", "brandColor", 50, false, "#8b5cf6"), "brandColor");
+  await createAttr(() => databases.createStringAttribute(DATABASE_ID, "brand_settings", "logoText", 255, false, ""), "logoText");
+
   console.log("\n✅ Appwrite setup complete!");
 }
 

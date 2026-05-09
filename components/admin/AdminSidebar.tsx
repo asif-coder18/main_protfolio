@@ -12,20 +12,36 @@ import {
   MessageSquare,
   ChevronRight,
   Code2,
+  MonitorPlay,
+  Settings,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Icon } from "@iconify/react";
 
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { href: "/admin/branding", label: "Brand Settings", icon: Settings },
   { href: "/admin/about", label: "About / Hero", icon: User },
   { href: "/admin/skills", label: "Skills", icon: Zap },
   { href: "/admin/projects", label: "Projects", icon: FolderKanban },
   { href: "/admin/experience", label: "Experience", icon: Briefcase },
   { href: "/admin/contact", label: "Contact Info", icon: Mail },
   { href: "/admin/messages", label: "Messages", icon: MessageSquare },
+  { href: "/admin/loader", label: "Loader Settings", icon: MonitorPlay },
 ];
 
 export function AdminSidebar() {
   const pathname = usePathname();
+  const [brand, setBrand] = useState<any>(null);
+
+  useEffect(() => {
+    fetch("/api/branding")
+      .then(res => res.json())
+      .then(data => {
+        if (!data.error) setBrand(data);
+      })
+      .catch(console.error);
+  }, []);
 
   const isActive = (item: typeof navItems[0]) => {
     if (item.exact) return pathname === item.href;
@@ -37,12 +53,24 @@ export function AdminSidebar() {
       {/* Logo */}
       <div className="p-6 border-b border-gray-800">
         <Link href="/admin" className="flex items-center gap-3 group">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/25">
-            <Code2 size={18} className="text-white" />
+          <div 
+            className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg transition-transform group-hover:scale-110 duration-300"
+            style={{ 
+              backgroundColor: brand?.brandColor ? `${brand.brandColor}20` : "#8b5cf620",
+              color: brand?.brandColor || "#8b5cf6"
+            }}
+          >
+            {brand?.logoType === "image" && brand?.logoImage ? (
+              <img src={brand.logoImage} alt="Logo" className="w-6 h-6 object-contain" />
+            ) : (
+              <Icon icon={brand?.icon || "lucide:code-2"} width={20} height={20} />
+            )}
           </div>
           <div>
-            <p className="text-sm font-bold text-white leading-tight">Portfolio</p>
-            <p className="text-xs text-gray-500 leading-tight">Admin Panel</p>
+            <p className="text-sm font-bold text-white leading-tight">
+              {brand?.brandName || "Portfolio"}
+            </p>
+            <p className="text-[10px] text-gray-500 uppercase tracking-widest font-medium mt-0.5">Admin Panel</p>
           </div>
         </Link>
       </div>

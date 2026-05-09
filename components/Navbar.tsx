@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Moon, Sun, Code2 } from "lucide-react";
 import { useTheme } from "./ThemeProvider";
+import { Icon } from "@iconify/react";
 
 const navLinks = [
   { label: "Home", href: "#hero" },
@@ -17,11 +18,20 @@ const navLinks = [
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [brand, setBrand] = useState<any>(null);
   const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll, { passive: true });
+    
+    fetch("/api/branding")
+      .then(res => res.json())
+      .then(data => {
+        if (!data.error) setBrand(data);
+      })
+      .catch(console.error);
+
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
@@ -59,10 +69,31 @@ export function Navbar() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <div className="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center">
-              <Code2 size={16} className="text-white" />
+            <div 
+              className="rounded-lg flex items-center justify-center overflow-hidden"
+              style={{ 
+                width: brand?.logoSize ? brand.logoSize + 8 : 32, 
+                height: brand?.logoSize ? brand.logoSize + 8 : 32,
+                backgroundColor: brand?.logoType === "image" ? "transparent" : (brand?.brandColor || "#6366f1")
+              }}
+            >
+              {brand?.logoType === "image" && brand?.logoImage ? (
+                <img 
+                  src={brand.logoImage} 
+                  alt="Logo" 
+                  style={{ height: brand.logoSize || 24, width: "auto" }} 
+                  className="object-contain"
+                />
+              ) : (
+                <Icon 
+                  icon={brand?.icon || "lucide:code-2"} 
+                  width={brand?.logoSize ? brand.logoSize - 8 : 16} 
+                  height={brand?.logoSize ? brand.logoSize - 8 : 16} 
+                  className="text-white" 
+                />
+              )}
             </div>
-            <span className="gradient-text">Abir.dev</span>
+            <span className="gradient-text">{brand?.logoText || brand?.brandName || "Abir.dev"}</span>
           </motion.a>
 
           {/* Desktop Links */}
