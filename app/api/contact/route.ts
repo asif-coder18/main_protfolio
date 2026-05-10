@@ -42,25 +42,49 @@ export async function POST(req: NextRequest) {
     try {
       if (process.env.RESEND_API_KEY) {
         const resend = new Resend(process.env.RESEND_API_KEY);
+
+        // Resend free tier: must send FROM onboarding@resend.dev
+        // and TO the email address verified on your Resend account.
         const { data, error } = await resend.emails.send({
           from: "Portfolio Contact <onboarding@resend.dev>",
-          to: ["maulaasiful@gmail.com"],
+          to: [process.env.CONTACT_EMAIL || "maulaasiful@gmail.com"],
           replyTo: email,
-          subject: `Portfolio: ${subject}`,
+          subject: `[Portfolio] New message from ${name}: ${subject}`,
           html: `
-            <div style="font-family: sans-serif; padding: 30px; border: 1px solid #f0f0f0; border-radius: 16px; max-width: 600px; margin: 0 auto; color: #1a1a1a;">
-              <h2 style="color: #6366f1; margin-top: 0;">New Portfolio Message</h2>
-              <div style="background: #f8fafc; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
-                <p style="margin: 0 0 10px;"><strong>Name:</strong> ${name}</p>
-                <p style="margin: 0 0 10px;"><strong>Email:</strong> ${email}</p>
-                <p style="margin: 0;"><strong>Subject:</strong> ${subject}</p>
+            <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:30px;background:#ffffff;border:1px solid #e5e7eb;border-radius:16px;">
+              <div style="text-align:center;margin-bottom:24px;">
+                <h1 style="color:#6366f1;font-size:22px;margin:0;">📬 New Portfolio Message</h1>
               </div>
-              <div style="line-height: 1.6; white-space: pre-wrap; color: #374151;">
-                ${message}
+              <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
+                <tr>
+                  <td style="padding:10px 14px;background:#f8fafc;border-radius:8px 8px 0 0;border-bottom:1px solid #e5e7eb;">
+                    <strong style="color:#374151;">From:</strong>
+                    <span style="color:#6366f1;margin-left:8px;">${name}</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:10px 14px;background:#f8fafc;border-bottom:1px solid #e5e7eb;">
+                    <strong style="color:#374151;">Email:</strong>
+                    <a href="mailto:${email}" style="color:#6366f1;margin-left:8px;">${email}</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:10px 14px;background:#f8fafc;border-radius:0 0 8px 8px;">
+                    <strong style="color:#374151;">Subject:</strong>
+                    <span style="color:#374151;margin-left:8px;">${subject}</span>
+                  </td>
+                </tr>
+              </table>
+              <div style="background:#f8fafc;padding:20px;border-radius:12px;border-left:4px solid #6366f1;margin-bottom:24px;">
+                <p style="margin:0;color:#374151;line-height:1.7;white-space:pre-wrap;">${message.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
               </div>
-              <hr style="border: 0; border-top: 1px solid #f0f0f0; margin: 30px 0;" />
-              <p style="font-size: 12px; color: #9ca3af; text-align: center; margin: 0;">
-                Sent at: ${new Date().toLocaleString()} · Reply to this email to contact the sender
+              <div style="text-align:center;padding:16px;background:#f0f0ff;border-radius:12px;">
+                <p style="margin:0;font-size:13px;color:#6366f1;">
+                  💡 Hit <strong>Reply</strong> to respond directly to ${name}
+                </p>
+              </div>
+              <p style="font-size:11px;color:#9ca3af;text-align:center;margin-top:20px;">
+                Sent via your portfolio contact form · ${new Date().toLocaleString("en-US", { dateStyle: "full", timeStyle: "short" })}
               </p>
             </div>
           `,
@@ -68,13 +92,13 @@ export async function POST(req: NextRequest) {
 
         if (error) {
           mailError = error.message;
-          console.error("Resend delivery failed:", error);
+          console.error("Resend delivery failed:", JSON.stringify(error));
         } else {
           emailSent = true;
-          console.log("Resend email sent successfully:", data?.id);
+          console.log("Email sent successfully. Resend ID:", data?.id);
         }
       } else {
-        mailError = "Email key missing (RESEND_API_KEY).";
+        mailError = "RESEND_API_KEY not set.";
         console.warn(mailError);
       }
     } catch (err: any) {
