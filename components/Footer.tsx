@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Code2, Heart, ArrowUp, Mail, Link as LinkIcon } from "lucide-react";
+import { Code2, ArrowUp, Mail, Link as LinkIcon } from "lucide-react";
 import { GithubIcon, LinkedinIcon, MailIcon } from "@/components/icons/SocialIcons";
 import { useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
@@ -163,10 +163,8 @@ export function Footer() {
 
         {/* Bottom bar */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 border-t border-[var(--border)]">
-          <p className="text-xs text-[var(--muted)] flex items-center gap-1.5">
-            © {new Date().getFullYear()} Asiful Maula Abir. Built with{" "}
-            <Heart size={12} className="text-red-400 fill-red-400" /> using
-            Next.js & Tailwind CSS
+          <p className="text-xs text-[var(--muted)]">
+            © 2026 Asiful Maula Abir. All rights reserved.
           </p>
 
           <motion.button
