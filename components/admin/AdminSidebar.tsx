@@ -28,6 +28,7 @@ const navItems = [
   { href: "/admin/contact", label: "Contact Info", icon: Mail },
   { href: "/admin/messages", label: "Messages", icon: MessageSquare },
   { href: "/admin/loader", label: "Loader Settings", icon: MonitorPlay },
+  { href: "/admin/settings", label: "Account Settings", icon: Settings },
 ];
 
 export function AdminSidebar() {
