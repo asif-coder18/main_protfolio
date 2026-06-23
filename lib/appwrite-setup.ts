@@ -129,7 +129,7 @@ async function setup() {
   await createCollection("projects", "Projects");
   await createAttr(() => databases.createStringAttribute(DATABASE_ID, "projects", "title", 255, true), "title");
   await createAttr(() => databases.createStringAttribute(DATABASE_ID, "projects", "description", 5000, false, ""), "description");
-  await createAttr(() => databases.createStringAttribute(DATABASE_ID, "projects", "image", 10, false, "🚀"), "image");
+  await createAttr(() => databases.createStringAttribute(DATABASE_ID, "projects", "icon", 10, false, ""), "icon");
   await createAttr(() => databases.createStringAttribute(DATABASE_ID, "projects", "imageUrl", 1000, false, ""), "imageUrl");
   await createAttr(() => databases.createStringAttribute(DATABASE_ID, "projects", "gradient", 500, false, "from-indigo-500/20 via-purple-500/10 to-transparent"), "gradient");
   await createAttr(() => databases.createStringAttribute(DATABASE_ID, "projects", "tags", 5000, false, "[]"), "tags");
@@ -138,6 +138,14 @@ async function setup() {
   await createAttr(() => databases.createBooleanAttribute(DATABASE_ID, "projects", "featured", false, false), "featured");
   await createAttr(() => databases.createIntegerAttribute(DATABASE_ID, "projects", "stars", false, 0), "stars");
   await createAttr(() => databases.createIntegerAttribute(DATABASE_ID, "projects", "order", false, 0), "order");
+
+  // ── PROJECT SETTINGS ─────────────────────────────────────────────────────────
+  await createCollection("project_settings", "Project Settings");
+  await createAttr(() => databases.createStringAttribute(DATABASE_ID, "project_settings", "badgeText", 100, false, "Projects"), "badgeText");
+  await createAttr(() => databases.createStringAttribute(DATABASE_ID, "project_settings", "headingText", 255, false, "Things I've Built"), "headingText");
+  await createAttr(() => databases.createStringAttribute(DATABASE_ID, "project_settings", "highlightedWord", 100, false, "Built"), "highlightedWord");
+  await createAttr(() => databases.createStringAttribute(DATABASE_ID, "project_settings", "description", 1000, false, "A selection of projects that showcase my skills and passion for building great products."), "description");
+  await createAttr(() => databases.createStringAttribute(DATABASE_ID, "project_settings", "categories", 5000, false, "[]"), "categories");
 
   // ── SKILL CATEGORIES ─────────────────────────────────────────────────────────
   await createCollection("skill_categories", "Skill Categories");

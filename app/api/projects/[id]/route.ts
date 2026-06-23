@@ -35,7 +35,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     const payload = {
       title: body.title,
       description: body.description || "",
-      image: (body.image || "🚀").slice(0, 10),
+      icon: (body.icon || "").slice(0, 10),
       imageUrl: body.imageUrl || "",
       gradient: body.gradient || "",
       tags: Array.isArray(body.tags) ? JSON.stringify(body.tags) : "[]",

@@ -9,7 +9,7 @@ interface Project {
   _id: string;
   title: string;
   description: string;
-  image: string;
+  icon: string;
   imageUrl: string;
   gradient: string;
   tags: string[];
@@ -19,12 +19,29 @@ interface Project {
   stars: number;
 }
 
+interface SectionSettings {
+  badgeText: string;
+  headingText: string;
+  highlightedWord: string;
+  description: string;
+  categories: string[];
+}
+
+const DEFAULT_SETTINGS: SectionSettings = {
+  badgeText: "Projects",
+  headingText: "Things I've Built",
+  highlightedWord: "Built",
+  description:
+    "A selection of projects that showcase my skills and passion for building great products.",
+  categories: [],
+};
+
 const defaultProjects: Project[] = [
   {
     _id: "1",
     title: "ShopFlow — E-Commerce Platform",
     description: "A full-featured e-commerce platform with real-time inventory, Stripe payments, and a blazing-fast storefront built with Next.js App Router and server components.",
-    image: "🛒", imageUrl: "", gradient: "from-indigo-500/20 via-purple-500/10 to-transparent",
+    icon: "🛒", imageUrl: "", gradient: "from-indigo-500/20 via-purple-500/10 to-transparent",
     tags: ["Next.js", "TypeScript", "Stripe", "Prisma", "Tailwind"],
     live: "https://example.com", github: "https://github.com", featured: true, stars: 128,
   },
@@ -32,7 +49,7 @@ const defaultProjects: Project[] = [
     _id: "2",
     title: "TaskBoard — Project Management",
     description: "A Kanban-style project management tool with drag-and-drop, real-time collaboration, and team workspaces. Inspired by Trello but built for developers.",
-    image: "📋", imageUrl: "", gradient: "from-purple-500/20 via-pink-500/10 to-transparent",
+    icon: "📋", imageUrl: "", gradient: "from-purple-500/20 via-pink-500/10 to-transparent",
     tags: ["React", "Next.js", "Socket.io", "MongoDB", "Tailwind"],
     live: "https://example.com", github: "https://github.com", featured: true, stars: 94,
   },
@@ -40,7 +57,7 @@ const defaultProjects: Project[] = [
     _id: "3",
     title: "WeatherNow — Weather Dashboard",
     description: "A beautiful weather dashboard with animated forecasts, location search, and interactive charts. Uses OpenWeather API with smart caching for performance.",
-    image: "🌤", imageUrl: "", gradient: "from-cyan-500/20 via-blue-500/10 to-transparent",
+    icon: "🌤", imageUrl: "", gradient: "from-cyan-500/20 via-blue-500/10 to-transparent",
     tags: ["Next.js", "TypeScript", "Chart.js", "OpenWeather API"],
     live: "https://example.com", github: "https://github.com", featured: false, stars: 67,
   },
@@ -48,19 +65,33 @@ const defaultProjects: Project[] = [
     _id: "4",
     title: "BlogCMS — Headless Blog",
     description: "A headless CMS-powered blog with MDX support, syntax highlighting, dark mode, and a custom admin dashboard. Achieves 100/100 Lighthouse scores.",
-    image: "✍️", imageUrl: "", gradient: "from-green-500/20 via-teal-500/10 to-transparent",
+    icon: "✍️", imageUrl: "", gradient: "from-green-500/20 via-teal-500/10 to-transparent",
     tags: ["Next.js", "MDX", "Contentlayer", "Tailwind", "Vercel"],
     live: "https://example.com", github: "https://github.com", featured: false, stars: 52,
   },
 ];
+
+/** Split a heading into [before, highlighted, after] parts */
+function splitHeading(heading: string, word: string) {
+  if (!word) return { before: heading, highlighted: "", after: "" };
+  const idx = heading.indexOf(word);
+  if (idx === -1) return { before: heading, highlighted: "", after: "" };
+  return {
+    before: heading.slice(0, idx),
+    highlighted: word,
+    after: heading.slice(idx + word.length),
+  };
+}
 
 export function Projects() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const [activeFilter, setActiveFilter] = useState("All");
   const [projects, setProjects] = useState<Project[]>(defaultProjects);
+  const [settings, setSettings] = useState<SectionSettings>(DEFAULT_SETTINGS);
 
   useEffect(() => {
+    // Fetch projects
     fetch("/api/projects")
       .then((r) => r.json())
       .then((json) => {
@@ -69,15 +100,52 @@ export function Projects() {
         }
       })
       .catch(() => {});
+
+    // Fetch section settings
+    fetch("/api/project-settings")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data && !data.error) {
+          setSettings({
+            badgeText: data.badgeText || DEFAULT_SETTINGS.badgeText,
+            headingText: data.headingText || DEFAULT_SETTINGS.headingText,
+            highlightedWord: data.highlightedWord || DEFAULT_SETTINGS.highlightedWord,
+            description: data.description || DEFAULT_SETTINGS.description,
+            categories: Array.isArray(data.categories) && data.categories.length > 0
+              ? data.categories
+              : [],
+          });
+        }
+      })
+      .catch(() => {});
   }, []);
 
-  // Compute unique filters dynamically from tags
-  const filters = ["All", ...Array.from(new Set(projects.flatMap((p) => p.tags)))].slice(0, 6); // Max 6 filters
+  // Build filter list: use DB categories if defined, else auto-generate from tags
+  const filters =
+    settings.categories.length > 0
+      ? ["All", ...settings.categories]
+      : ["All", ...Array.from(new Set(projects.flatMap((p) => p.tags)))].slice(0, 6);
+
+  // Reset active filter if it's no longer in the list
+  useEffect(() => {
+    if (activeFilter !== "All" && !filters.includes(activeFilter)) {
+      setActiveFilter("All");
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters.join(",")]);
 
   const filtered =
     activeFilter === "All"
       ? projects
-      : projects.filter((p) => p.tags.includes(activeFilter));
+      : settings.categories.length > 0
+        // If using custom categories, filter by tag match
+        ? projects.filter((p) => p.tags.includes(activeFilter))
+        : projects.filter((p) => p.tags.includes(activeFilter));
+
+  const { before, highlighted, after } = splitHeading(
+    settings.headingText,
+    settings.highlightedWord
+  );
 
   return (
     <section id="projects" className="py-24 px-4 sm:px-6 lg:px-8">
@@ -90,14 +158,17 @@ export function Projects() {
           className="text-center mb-12"
         >
           <span className="text-indigo-400 text-sm font-semibold tracking-widest uppercase mb-3 block">
-            Projects
+            {settings.badgeText}
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
-            Things I&apos;ve <span className="gradient-text">Built</span>
+            {before}
+            {highlighted && (
+              <span className="gradient-text">{highlighted}</span>
+            )}
+            {after}
           </h2>
           <p className="text-[var(--muted)] max-w-2xl mx-auto text-lg">
-            A selection of projects that showcase my skills and passion for
-            building great products.
+            {settings.description}
           </p>
         </motion.div>
 
@@ -143,15 +214,15 @@ export function Projects() {
                 {project.imageUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={project.imageUrl} alt={project.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                ) : (
+                ) : project.icon ? (
                   <motion.span
                     className="text-7xl select-none"
                     whileHover={{ scale: 1.2, rotate: 5 }}
                     transition={{ duration: 0.3 }}
                   >
-                    {project.image}
+                    {project.icon}
                   </motion.span>
-                )}
+                ) : null}
 
                 {/* Featured badge */}
                 {project.featured && (
