@@ -3,13 +3,26 @@
 import { useEffect, useState, useCallback } from "react";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
 import { ToastContainer, useToast } from "@/components/admin/Toast";
-import { Save, Plus, Trash2, GripVertical } from "lucide-react";
+import { Save, Plus, Trash2, GripVertical, Type } from "lucide-react";
 import { IconPicker } from "@/components/admin/IconPicker";
 import { Icon } from "@iconify/react";
 
 interface Skill { name: string; level: number; icon: string; }
 interface Category { _id?: string; title: string; color: string; order: number; skills: Skill[]; }
 interface TechIcon { _id?: string; name: string; icon: string; bg: string; text: string; order: number; }
+interface SkillMeta {
+  badge: string;
+  heading: string;
+  highlight: string;
+  description: string;
+}
+
+const DEFAULT_META: SkillMeta = {
+  badge: "Skills",
+  heading: "My Tech Stack",
+  highlight: "Tech Stack",
+  description: "Technologies I work with to build modern, performant web applications.",
+};
 
 const COLORS = ["indigo", "purple", "pink", "blue", "green", "orange", "yellow", "cyan", "teal", "red"];
 const colorBadge: Record<string, string> = {
@@ -31,6 +44,7 @@ export default function SkillsAdminPage() {
   const toast = useToast();
   const [categories, setCategories] = useState<Category[]>([]);
   const [techIcons, setTechIcons] = useState<TechIcon[]>([]);
+  const [skillMeta, setSkillMeta] = useState<SkillMeta>(DEFAULT_META);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"categories" | "techicons">("categories");
@@ -45,13 +59,13 @@ export default function SkillsAdminPage() {
       const json = await res.json();
       if (json.categories) setCategories(json.categories);
       if (json.techIcons) {
-        // Migration: rename symbol to icon if symbol exists
         const mapped = json.techIcons.map((ti: any) => ({
           ...ti,
           icon: ti.icon || ti.symbol || "logos:react"
         }));
         setTechIcons(mapped);
       }
+      if (json.skillMeta) setSkillMeta({ ...DEFAULT_META, ...json.skillMeta });
     } catch { /* ignore */ }
     finally { setLoading(false); }
   }, []);
@@ -64,7 +78,7 @@ export default function SkillsAdminPage() {
       const res = await fetch("/api/skills", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ categories, techIcons }),
+        body: JSON.stringify({ categories, techIcons, skillMeta }),
       });
       if (!res.ok) throw new Error();
       toast.success("Saved!", "Skills updated successfully.");
@@ -145,6 +159,102 @@ export default function SkillsAdminPage() {
       )}
 
       <main className="flex-1 p-6 max-w-5xl">
+
+        {/* ── Skills Section Settings ── */}
+        <div className="bg-gray-900/50 border border-indigo-500/20 rounded-2xl p-6 mb-8 backdrop-blur-sm">
+          <div className="flex items-center gap-3 mb-5 pb-4 border-b border-gray-800">
+            <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center flex-shrink-0">
+              <Type size={15} className="text-indigo-400" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-white">Skills Section Settings</p>
+              <p className="text-xs text-gray-500 mt-0.5">Customize the heading text shown on your portfolio's Skills section</p>
+            </div>
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-5">
+            {/* Badge */}
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">
+                Section Badge
+                <span className="ml-2 normal-case font-normal text-gray-600">e.g. SKILLS</span>
+              </label>
+              <input
+                className={inputCls}
+                value={skillMeta.badge}
+                onChange={(e) => setSkillMeta((p) => ({ ...p, badge: e.target.value }))}
+                placeholder="SKILLS"
+              />
+            </div>
+
+            {/* Main Heading */}
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">
+                Main Heading
+                <span className="ml-2 normal-case font-normal text-gray-600">e.g. My Tech Stack</span>
+              </label>
+              <input
+                className={inputCls}
+                value={skillMeta.heading}
+                onChange={(e) => setSkillMeta((p) => ({ ...p, heading: e.target.value }))}
+                placeholder="My Tech Stack"
+              />
+            </div>
+
+            {/* Highlighted Word */}
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">
+                Highlighted Word
+                <span className="ml-2 normal-case font-normal text-gray-600">gradient part of heading</span>
+              </label>
+              <input
+                className={inputCls}
+                value={skillMeta.highlight}
+                onChange={(e) => setSkillMeta((p) => ({ ...p, highlight: e.target.value }))}
+                placeholder="Tech Stack"
+              />
+              <p className="text-[10px] text-gray-600 mt-1">Must appear inside the Main Heading — this word gets the gradient color</p>
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">
+                Description
+              </label>
+              <textarea
+                rows={2}
+                className={`${inputCls} resize-none`}
+                value={skillMeta.description}
+                onChange={(e) => setSkillMeta((p) => ({ ...p, description: e.target.value }))}
+                placeholder="Technologies I work with..."
+              />
+            </div>
+          </div>
+
+          {/* Live preview */}
+          <div className="mt-5 p-4 rounded-xl bg-gray-950/60 border border-gray-800 text-center">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-600 mb-2">Preview</p>
+            <span className="text-indigo-400 text-xs font-semibold tracking-widest uppercase block mb-1">
+              {skillMeta.badge || "SKILLS"}
+            </span>
+            <h3 className="text-lg font-bold text-white">
+              {skillMeta.highlight && skillMeta.heading.includes(skillMeta.highlight)
+                ? <>
+                    {skillMeta.heading.split(skillMeta.highlight)[0]}
+                    <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                      {skillMeta.highlight}
+                    </span>
+                    {skillMeta.heading.split(skillMeta.highlight)[1]}
+                  </>
+                : skillMeta.heading || "My Tech Stack"
+              }
+            </h3>
+            <p className="text-gray-500 text-xs mt-1 max-w-sm mx-auto">
+              {skillMeta.description || "Description text..."}
+            </p>
+          </div>
+        </div>
+
         {/* Tabs & Actions */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div className="flex gap-2">

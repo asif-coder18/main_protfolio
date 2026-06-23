@@ -7,6 +7,14 @@ import { Icon } from "@iconify/react";
 interface Skill { name: string; level: number; icon: string; }
 interface Category { _id?: string; title: string; color: string; order: number; skills: Skill[]; }
 interface TechIcon { name: string; symbol: string; bg: string; text: string; order: number; }
+interface SkillMeta { badge: string; heading: string; highlight: string; description: string; }
+
+const DEFAULT_META: SkillMeta = {
+  badge: "Skills",
+  heading: "My Tech Stack",
+  highlight: "Tech Stack",
+  description: "Technologies I work with to build modern, performant web applications.",
+};
 
 const defaultCategories: Category[] = [
   { title: "Frontend", color: "indigo", order: 0, skills: [
@@ -86,6 +94,7 @@ export function Skills() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const [categories, setCategories] = useState<Category[]>(defaultCategories);
   const [techIcons, setTechIcons] = useState<TechIcon[]>(defaultTechIcons);
+  const [meta, setMeta] = useState<SkillMeta>(DEFAULT_META);
 
   useEffect(() => {
     fetch("/api/skills")
@@ -93,6 +102,7 @@ export function Skills() {
       .then((json) => {
         if (json.categories?.length) setCategories(json.categories);
         if (json.techIcons?.length) setTechIcons(json.techIcons);
+        if (json.skillMeta) setMeta({ ...DEFAULT_META, ...json.skillMeta });
       })
       .catch(() => {});
   }, []);
@@ -107,12 +117,22 @@ export function Skills() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <span className="text-indigo-400 text-sm font-semibold tracking-widest uppercase mb-3 block">Skills</span>
+          <span className="text-indigo-400 text-sm font-semibold tracking-widest uppercase mb-3 block">
+            {meta.badge}
+          </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
-            My <span className="gradient-text">Tech Stack</span>
+            {meta.highlight && meta.heading.includes(meta.highlight) ? (
+              <>
+                {meta.heading.split(meta.highlight)[0]}
+                <span className="gradient-text">{meta.highlight}</span>
+                {meta.heading.split(meta.highlight)[1]}
+              </>
+            ) : (
+              meta.heading
+            )}
           </h2>
           <p className="text-[var(--muted)] max-w-2xl mx-auto text-lg">
-            Technologies I work with to build modern, performant web applications.
+            {meta.description}
           </p>
         </motion.div>
 
