@@ -7,6 +7,9 @@ import { Experience } from "@/components/sections/Experience";
 import { Contact } from "@/components/sections/Contact";
 import { Footer } from "@/components/Footer";
 import { LoadingScreen } from "@/components/LoadingScreen";
+import { DynamicSections } from "@/components/DynamicSections";
+
+export const dynamic = "force-dynamic";
 
 export default function Home() {
   return (
@@ -14,12 +17,7 @@ export default function Home() {
       <LoadingScreen />
       <Navbar />
       <main>
-        <Hero />
-        <About />
-        <Skills />
-        <Projects />
-        <Experience />
-        <Contact />
+        <DynamicSections />
       </main>
       <Footer />
     </>

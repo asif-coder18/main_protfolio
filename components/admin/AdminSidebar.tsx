@@ -14,6 +14,7 @@ import {
   Code2,
   MonitorPlay,
   Settings,
+  LayoutList,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
@@ -21,6 +22,7 @@ import { Icon } from "@iconify/react";
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/admin/branding", label: "Brand Settings", icon: Settings },
+  { href: "/admin/sections", label: "Section Manager", icon: LayoutList },
   { href: "/admin/about", label: "About / Hero", icon: User },
   { href: "/admin/skills", label: "Skills", icon: Zap },
   { href: "/admin/projects", label: "Projects", icon: FolderKanban },

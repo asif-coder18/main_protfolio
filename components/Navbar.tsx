@@ -6,31 +6,48 @@ import { Menu, X, Moon, Sun, Code2 } from "lucide-react";
 import { useTheme } from "./ThemeProvider";
 import { Icon } from "@iconify/react";
 
-const navLinks = [
-  { label: "Home", href: "#hero" },
-  { label: "About", href: "#about" },
-  { label: "Skills", href: "#skills" },
-  { label: "Projects", href: "#projects" },
+interface SectionConfig { id: string; label: string; order: number; visible: boolean; }
+
+// Label overrides for navbar display (shorter names)
+const NAV_LABEL: Record<string, string> = {
+  hero: "Home", about: "About", skills: "Skills",
+  projects: "Projects", experience: "Experience", contact: "Contact",
+};
+
+const DEFAULT_NAV = [
+  { label: "Home",       href: "#hero" },
+  { label: "About",      href: "#about" },
+  { label: "Skills",     href: "#skills" },
+  { label: "Projects",   href: "#projects" },
   { label: "Experience", href: "#experience" },
-  { label: "Contact", href: "#contact" },
+  { label: "Contact",    href: "#contact" },
 ];
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [brand, setBrand] = useState<any>(null);
+  const [navLinks, setNavLinks] = useState(DEFAULT_NAV);
   const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll, { passive: true });
-    
-    fetch("/api/branding")
-      .then(res => res.json())
-      .then(data => {
-        if (!data.error) setBrand(data);
-      })
-      .catch(console.error);
+
+    // Fetch branding and section order in parallel
+    Promise.all([
+      fetch("/api/branding").then(r => r.json()).catch(() => null),
+      fetch("/api/section-settings").then(r => r.json()).catch(() => null),
+    ]).then(([brandData, sections]) => {
+      if (brandData && !brandData.error) setBrand(brandData);
+      if (Array.isArray(sections) && sections.length > 0) {
+        const ordered = (sections as SectionConfig[])
+          .filter(s => s.visible)
+          .sort((a, b) => a.order - b.order)
+          .map(s => ({ label: NAV_LABEL[s.id] ?? s.label, href: `#${s.id}` }));
+        setNavLinks(ordered);
+      }
+    });
 
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
