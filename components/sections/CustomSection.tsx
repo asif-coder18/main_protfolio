@@ -7,15 +7,13 @@ import type { Block, CustomSection } from "@/app/api/custom-sections/route";
 // ── Individual block renderers ────────────────────────────────────────────────
 
 function HeadingBlock({ b }: { b: Block }) {
-  const Tag = (b.level ?? "h2") as keyof JSX.IntrinsicElements;
   const sizeMap = { h1: "text-4xl sm:text-5xl", h2: "text-3xl sm:text-4xl", h3: "text-2xl sm:text-3xl" };
   const alignMap = { left: "text-left", center: "text-center", right: "text-right" };
-  return (
-    <Tag
-      className={`font-bold text-[var(--foreground)] ${sizeMap[b.level ?? "h2"]} ${alignMap[b.align ?? "center"]}`}
-      dangerouslySetInnerHTML={{ __html: b.text ?? "" }}
-    />
-  );
+  const cls = `font-bold text-[var(--foreground)] ${sizeMap[b.level ?? "h2"]} ${alignMap[b.align ?? "center"]}`;
+  const html = { __html: b.text ?? "" };
+  if (b.level === "h1") return <h1 className={cls} dangerouslySetInnerHTML={html} />;
+  if (b.level === "h3") return <h3 className={cls} dangerouslySetInnerHTML={html} />;
+  return <h2 className={cls} dangerouslySetInnerHTML={html} />;
 }
 
 function ParagraphBlock({ b }: { b: Block }) {
