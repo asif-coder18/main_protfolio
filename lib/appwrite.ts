@@ -15,6 +15,7 @@ export const COLLECTIONS = {
   PROJECTS: "projects",
   PROJECT_SETTINGS: "project_settings",
   SECTION_SETTINGS: "section_settings",
+  CUSTOM_SECTIONS: "custom_sections",
   SKILL_CATEGORIES: "skill_categories",
   SKILL_META: "skill_meta",
   TECH_ICONS: "tech_icons",

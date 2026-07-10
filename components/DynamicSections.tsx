@@ -7,6 +7,8 @@ import { Skills } from "@/components/sections/Skills";
 import { Projects } from "@/components/sections/Projects";
 import { Experience } from "@/components/sections/Experience";
 import { Contact } from "@/components/sections/Contact";
+import { CustomSectionRenderer } from "@/components/sections/CustomSection";
+import type { CustomSection } from "@/app/api/custom-sections/route";
 
 interface SectionConfig {
   id: string;
@@ -25,7 +27,7 @@ const DEFAULT_SECTIONS: SectionConfig[] = [
   { id: "contact",    label: "Contact",    order: 5, visible: true },
 ];
 
-const SECTION_MAP: Record<string, React.ComponentType> = {
+const BUILTIN_MAP: Record<string, React.ComponentType> = {
   hero:       Hero,
   about:      About,
   skills:     Skills,
@@ -36,28 +38,42 @@ const SECTION_MAP: Record<string, React.ComponentType> = {
 
 export function DynamicSections() {
   const [sections, setSections] = useState<SectionConfig[]>(DEFAULT_SECTIONS);
+  const [customSections, setCustomSections] = useState<CustomSection[]>([]);
 
   useEffect(() => {
-    fetch("/api/section-settings")
-      .then((r) => r.json())
-      .then((data: SectionConfig[]) => {
-        if (Array.isArray(data) && data.length > 0) {
-          setSections(data.sort((a, b) => a.order - b.order));
-        }
-      })
-      .catch(() => {
-        // Keep defaults on error — site never breaks
-      });
+    Promise.all([
+      fetch("/api/section-settings").then(r => r.json()).catch(() => null),
+      fetch("/api/custom-sections").then(r => r.json()).catch(() => []),
+    ]).then(([sectionData, customData]) => {
+      if (Array.isArray(sectionData) && sectionData.length > 0) {
+        setSections(sectionData.sort((a: SectionConfig, b: SectionConfig) => a.order - b.order));
+      }
+      if (Array.isArray(customData)) {
+        setCustomSections(customData);
+      }
+    });
   }, []);
+
+  // Build a merged + sorted list of all visible items
+  const customMap = Object.fromEntries(
+    customSections.map((cs) => [cs.sectionId, cs])
+  );
 
   return (
     <>
       {sections
         .filter((s) => s.visible)
         .map((s) => {
-          const Component = SECTION_MAP[s.id];
-          if (!Component) return null;
-          return <Component key={s.id} />;
+          // Built-in section
+          const Builtin = BUILTIN_MAP[s.id];
+          if (Builtin) return <Builtin key={s.id} />;
+
+          // Custom section
+          const custom = customMap[s.id];
+          if (custom && custom.visible) {
+            return <CustomSectionRenderer key={s.id} section={custom} />;
+          }
+          return null;
         })}
     </>
   );
