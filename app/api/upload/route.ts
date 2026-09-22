@@ -15,13 +15,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml", "application/pdf"];
-    if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json({ error: "Invalid file type" }, { status: 400 });
+    const isImage = file.type.startsWith("image/");
+    if (!isImage && file.type !== "application/pdf") {
+      return NextResponse.json({ error: "Invalid file type. Please upload an image or PDF." }, { status: 400 });
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      return NextResponse.json({ error: "File too large (max 5MB)" }, { status: 400 });
+    // 50MB maximum limit on server route
+    if (file.size > 50 * 1024 * 1024) {
+      return NextResponse.json({ error: "File too large (max 50MB)" }, { status: 400 });
     }
 
     const bytes = await file.arrayBuffer();

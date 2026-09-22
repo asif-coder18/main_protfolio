@@ -53,11 +53,6 @@ export function LogoPicker({ onSelect, onClose, selectedValue, selectedType }: L
       return;
     }
 
-    if (file.size > 2 * 1024 * 1024) {
-      setError("File size too large (max 2MB)");
-      return;
-    }
-
     setError("");
     setUploading(true);
 
