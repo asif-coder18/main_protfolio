@@ -59,7 +59,7 @@ async function setup() {
 
   // ── Storage Bucket ──────────────────────────────────────────────────────────
   try {
-    await storage.createBucket(BUCKET_ID, "Portfolio Uploads", [Permission.read(Role.any())], false, undefined, 5 * 1024 * 1024, ["image/jpeg", "image/png", "image/webp", "image/gif", "application/pdf"]);
+    await storage.createBucket(BUCKET_ID, "Portfolio Uploads", [Permission.read(Role.any())], false, undefined, 50 * 1024 * 1024, []);
     console.log("✓ Created storage bucket: portfolio_uploads");
   } catch (e: unknown) {
     const err = e as { code?: number };

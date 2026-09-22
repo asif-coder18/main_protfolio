@@ -36,8 +36,9 @@ export async function POST(req: NextRequest) {
     const url = `${ENDPOINT}/storage/buckets/${STORAGE_BUCKET_ID}/files/${uploaded.$id}/view?project=${PROJECT_ID}`;
 
     return NextResponse.json({ url, fileId: uploaded.$id });
-  } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: "Upload failed" }, { status: 500 });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Upload failed";
+    console.error("Appwrite Upload Error:", err);
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
