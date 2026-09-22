@@ -18,6 +18,7 @@ export interface BrandSettings {
   logoSize: number;
   brandColor: string;
   logoText: string;
+  favicon?: string;
 }
 
 function deserialise(doc: Record<string, unknown>): BrandSettings {
@@ -38,7 +39,8 @@ export async function GET() {
         icon: "lucide:code-2",
         logoSize: 32,
         brandColor: "#8b5cf6",
-        logoText: "Abir.dev"
+        logoText: "Abir.dev",
+        favicon: ""
       });
     }
     
@@ -65,6 +67,7 @@ export async function PUT(req: NextRequest) {
       logoSize: Number(body.logoSize) || 32,
       brandColor: body.brandColor || "#8b5cf6",
       logoText: body.logoText || body.brandName || "Abir.dev",
+      favicon: body.favicon || "",
     };
 
     const existing = await db.listDocuments(DATABASE_ID, COLLECTIONS.BRAND_SETTINGS, [Query.limit(1)]);

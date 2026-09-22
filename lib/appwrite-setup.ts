@@ -195,6 +195,7 @@ async function setup() {
   await createAttr(() => databases.createIntegerAttribute(DATABASE_ID, "brand_settings", "logoSize", false, 32), "logoSize");
   await createAttr(() => databases.createStringAttribute(DATABASE_ID, "brand_settings", "brandColor", 50, false, "#8b5cf6"), "brandColor");
   await createAttr(() => databases.createStringAttribute(DATABASE_ID, "brand_settings", "logoText", 255, false, ""), "logoText");
+  await createAttr(() => databases.createStringAttribute(DATABASE_ID, "brand_settings", "favicon", 1000, false, ""), "favicon");
 
   console.log("\n✅ Appwrite setup complete!");
 }

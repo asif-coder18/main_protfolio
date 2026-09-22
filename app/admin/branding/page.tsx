@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Save, Image as ImageIcon, Type, Palette, Monitor, Smartphone, Layout } from "lucide-react";
+import { Save, Image as ImageIcon, Type, Palette, Monitor, Smartphone, Layout, Globe, Globe2 } from "lucide-react";
 import { LogoPicker } from "@/components/admin/LogoPicker";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 import { ToastContainer, useToast } from "@/components/admin/Toast";
 import { Icon } from "@iconify/react";
 
@@ -15,6 +16,7 @@ interface BrandSettings {
   logoSize: number;
   brandColor: string;
   logoText: string;
+  favicon?: string;
 }
 
 export default function BrandingPage() {
@@ -30,6 +32,7 @@ export default function BrandingPage() {
     logoSize: 32,
     brandColor: "#8b5cf6",
     logoText: "Abir.dev",
+    favicon: "",
   });
 
   useEffect(() => {
@@ -59,7 +62,17 @@ export default function BrandingPage() {
         body: JSON.stringify(settings),
       });
       if (res.ok) {
-        success("Success", "Branding settings updated successfully!");
+        success("Success", "Branding & Favicon settings updated successfully!");
+        // Dynamically update link[rel="icon"] immediately
+        if (settings.favicon) {
+          let link: HTMLLinkElement | null = document.querySelector("link[rel='icon']");
+          if (!link) {
+            link = document.createElement("link");
+            link.rel = "icon";
+            document.head.appendChild(link);
+          }
+          link.href = settings.favicon;
+        }
       } else {
         error("Error", "Failed to update branding settings");
       }
@@ -82,13 +95,13 @@ export default function BrandingPage() {
     <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white">Site Branding</h1>
-          <p className="text-gray-400 mt-1">Manage your website's logo, brand name, and identity.</p>
+          <h1 className="text-3xl font-bold text-white">Site Branding & Favicon</h1>
+          <p className="text-gray-400 mt-1">Manage your website's logo, browser tab icon (favicon), and brand identity.</p>
         </div>
         <button
           onClick={handleSave}
           disabled={saving}
-          className="flex items-center gap-2 px-6 py-2.5 bg-indigo-500 hover:bg-indigo-600 disabled:bg-indigo-500/50 text-white rounded-xl font-medium transition-all shadow-lg shadow-indigo-500/20"
+          className="flex items-center gap-2 px-6 py-2.5 bg-indigo-500 hover:bg-indigo-600 disabled:bg-indigo-500/50 text-white rounded-xl font-medium transition-all shadow-lg shadow-indigo-500/20 cursor-pointer"
         >
           {saving ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Save size={18} />}
           {saving ? "Saving..." : "Save Changes"}
@@ -161,13 +174,33 @@ export default function BrandingPage() {
             </div>
           </div>
 
-          {/* Logo Selection */}
+          {/* Favicon / Browser Tab Logo Settings */}
+          <div className="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-3xl p-6 sm:p-8 space-y-4">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                <Globe className="text-blue-400" size={20} />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-white">Browser Tab Icon (Favicon)</h2>
+                <p className="text-xs text-gray-400">Upload or crop an image to display in browser tabs</p>
+              </div>
+            </div>
+
+            <ImageUpload
+              label="Favicon / Tab Logo Image"
+              currentUrl={settings.favicon}
+              onUpload={(url) => setSettings({ ...settings, favicon: url })}
+              aspectRatio={1} // 1:1 Square
+            />
+          </div>
+
+          {/* Navbar Logo Selection */}
           <div className="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-3xl p-6 sm:p-8">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
                 <ImageIcon className="text-purple-400" size={20} />
               </div>
-              <h2 className="text-xl font-semibold text-white">Logo Configuration</h2>
+              <h2 className="text-xl font-semibold text-white">Navbar Logo Configuration</h2>
             </div>
 
             <div className="space-y-6">
@@ -180,6 +213,7 @@ export default function BrandingPage() {
                     <Icon icon={settings.icon || "lucide:code-2"} width={48} height={48} />
                   ) : (
                     settings.logoImage ? (
+                      // eslint-disable-next-line @next/next/no-img-element
                       <img src={settings.logoImage} alt="Logo" className="w-16 h-16 object-contain" />
                     ) : (
                       <ImageIcon size={48} className="text-gray-700" />
@@ -197,8 +231,9 @@ export default function BrandingPage() {
                 </div>
 
                 <button
+                  type="button"
                   onClick={() => setIsPickerOpen(true)}
-                  className="px-8 py-3 bg-indigo-500 hover:bg-indigo-600 text-white rounded-2xl font-bold transition-all shadow-lg shadow-indigo-500/20 flex items-center gap-2"
+                  className="px-8 py-3 bg-indigo-500 hover:bg-indigo-600 text-white rounded-2xl font-bold transition-all shadow-lg shadow-indigo-500/20 flex items-center gap-2 cursor-pointer"
                 >
                   <Palette size={18} />
                   Change Logo
@@ -235,6 +270,29 @@ export default function BrandingPage() {
               </div>
 
               <div className="space-y-8">
+                {/* Browser Tab Preview */}
+                <div className="space-y-3">
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                    <Globe2 size={12} /> Browser Tab Preview
+                  </p>
+                  <div className="bg-gray-950 border border-gray-800 rounded-2xl p-3">
+                    <div className="flex items-center gap-2 bg-gray-900 border border-gray-800 px-3 py-2 rounded-xl text-xs max-w-xs">
+                      {settings.favicon ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={settings.favicon} alt="Favicon" className="w-4 h-4 rounded-xs object-contain" />
+                      ) : (
+                        <div className="w-4 h-4 rounded-full bg-indigo-500 flex items-center justify-center text-[8px] text-white font-bold">
+                          ▲
+                        </div>
+                      )}
+                      <span className="text-gray-300 font-medium truncate flex-1">
+                        {settings.brandName} | Portfolio
+                      </span>
+                      <span className="text-gray-600 text-xs">×</span>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Desktop Preview */}
                 <div className="space-y-3">
                   <p className="text-xs font-medium text-gray-500 uppercase tracking-wider flex items-center gap-2">
@@ -251,6 +309,7 @@ export default function BrandingPage() {
                         </div>
                       ) : (
                         settings.logoImage && (
+                          // eslint-disable-next-line @next/next/no-img-element
                           <img 
                             src={settings.logoImage} 
                             alt="Logo" 
@@ -286,6 +345,7 @@ export default function BrandingPage() {
                         </div>
                       ) : (
                         settings.logoImage && (
+                          // eslint-disable-next-line @next/next/no-img-element
                           <img 
                             src={settings.logoImage} 
                             alt="Logo" 
