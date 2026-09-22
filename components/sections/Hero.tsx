@@ -68,7 +68,8 @@ export function Hero() {
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex items-center overflow-hidden hero-gradient grid-pattern"
+      className="relative min-h-screen flex items-center overflow-hidden"
+      style={{ backgroundColor: "#FFFFFF" }}
     >
       {/* Animated background orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -129,9 +130,9 @@ export function Hero() {
               transition={{ duration: 0.7, delay: 0.1 }}
               className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-4 leading-tight"
             >
-              <span className="gradient-text">{(data.name || "Asiful").split(" ")[0]}</span>
+              <span style={{ color: "#0F2747" }}>{(data.name || "Asiful").split(" ")[0]}</span>
               <br />
-              <span className="text-[var(--foreground)]">{(data.name || "").split(" ").slice(1).join(" ")}</span>
+              <span style={{ color: "#0F2747" }}>{(data.name || "").split(" ").slice(1).join(" ")}</span>
             </motion.h1>
 
             {/* Title */}
@@ -169,7 +170,8 @@ export function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.3 }}
-              className="text-base text-[var(--muted)] max-w-lg mb-8 leading-relaxed"
+              className="text-base max-w-lg mb-8 leading-relaxed"
+              style={{ color: "#64748B" }}
             >
               {data.tagline}
             </motion.p>
@@ -183,7 +185,10 @@ export function Hero() {
             >
               <motion.button
                 onClick={() => scrollToSection("#projects")}
-                className="group flex items-center gap-2 px-7 py-3 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white font-semibold text-sm transition-all duration-200 glow-sm"
+                className="group flex items-center gap-2 px-7 py-3 rounded-xl text-white font-semibold text-sm transition-all duration-200"
+                style={{ backgroundColor: "#2563EB" }}
+                onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#1d4ed8")}
+                onMouseLeave={e => (e.currentTarget.style.backgroundColor = "#2563EB")}
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -192,7 +197,10 @@ export function Hero() {
               </motion.button>
               <motion.button
                 onClick={() => scrollToSection("#contact", "General Inquiry / Let's Connect")}
-                className="flex items-center gap-2 px-7 py-3 rounded-xl border border-[var(--border)] hover:border-indigo-500/50 text-[var(--foreground)] font-semibold text-sm transition-all duration-200 hover:bg-indigo-500/5"
+                className="flex items-center gap-2 px-7 py-3 rounded-xl font-semibold text-sm transition-all duration-200"
+                style={{ border: "1px solid #0F2747", color: "#0F2747", backgroundColor: "transparent" }}
+                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#0F274710"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; }}
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
               >

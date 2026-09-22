@@ -70,9 +70,10 @@ export function Navbar() {
         transition={{ duration: 0.6, ease: "easeOut" }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           scrolled
-            ? "glass border-b border-[var(--border)] shadow-lg shadow-black/5"
+            ? "border-b border-[#0F2747] shadow-lg shadow-black/20"
             : "bg-transparent"
         }`}
+        style={scrolled ? { backgroundColor: "#0F2747" } : undefined}
       >
         <nav className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           {/* Logo */}
@@ -119,7 +120,7 @@ export function Navbar() {
               <li key={link.href}>
                 <motion.button
                   onClick={() => handleNavClick(link.href)}
-                  className="px-4 py-2 rounded-lg text-sm font-medium text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--border)] transition-all duration-200"
+                  className="px-4 py-2 rounded-lg text-sm font-medium text-white/80 hover:text-white hover:bg-white/10 transition-all duration-200"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -145,7 +146,10 @@ export function Navbar() {
             {/* CTA */}
             <motion.button
               onClick={() => handleNavClick("#contact", "Hire Me / Project Inquiry")}
-              className="hidden md:flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-medium transition-colors duration-200"
+              className="hidden md:flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors duration-200"
+              style={{ backgroundColor: "#2563EB" }}
+              onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#1d4ed8")}
+              onMouseLeave={e => (e.currentTarget.style.backgroundColor = "#2563EB")}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -174,7 +178,8 @@ export function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="fixed top-16 left-0 right-0 z-40 glass border-b border-[var(--border)] shadow-xl md:hidden"
+            className="fixed top-16 left-0 right-0 z-40 border-b border-[#0F2747]/80 shadow-xl md:hidden"
+            style={{ backgroundColor: "#0F2747" }}
           >
             <ul className="max-w-6xl mx-auto px-4 py-4 flex flex-col gap-1">
               {navLinks.map((link, i) => (
@@ -186,7 +191,7 @@ export function Navbar() {
                 >
                   <button
                     onClick={() => handleNavClick(link.href)}
-                    className="w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--border)] transition-all duration-200"
+                    className="w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-white/80 hover:text-white hover:bg-white/10 transition-all duration-200"
                   >
                     {link.label}
                   </button>
