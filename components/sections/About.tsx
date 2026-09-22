@@ -64,7 +64,7 @@ export function About() {
   }, []);
 
   return (
-    <section id="about" className="py-24 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: "#F5F7FA" }}>
+    <section id="about" className="py-24 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto" ref={ref}>
         {/* Section header */}
         <motion.div
@@ -76,7 +76,7 @@ export function About() {
           <span className="text-indigo-400 text-sm font-semibold tracking-widest uppercase mb-3 block">
             About Me
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4" style={{ color: "#0F2747" }}>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
             Passionate about{" "}
             <span className="gradient-text">great UX</span>
           </h2>
@@ -92,7 +92,7 @@ export function About() {
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.2 }}
           >
-            <div className="space-y-5 leading-relaxed text-base" style={{ color: "#1F2937" }}>
+            <div className="space-y-5 text-[var(--muted)] leading-relaxed text-base">
               {data.bio.map((para, i) => (
                 <p key={i}>{para}</p>
               ))}

@@ -108,7 +108,7 @@ export function Skills() {
   }, []);
 
   return (
-    <section id="skills" className="py-24 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: "#F5F7FA" }}>
+    <section id="skills" className="py-24 px-4 sm:px-6 lg:px-8 bg-[var(--card)]">
       <div className="max-w-6xl mx-auto" ref={ref}>
         {/* Header */}
         <motion.div
@@ -120,7 +120,7 @@ export function Skills() {
           <span className="text-indigo-400 text-sm font-semibold tracking-widest uppercase mb-3 block">
             {meta.badge}
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4" style={{ color: "#0F2747" }}>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
             {meta.highlight && meta.heading.includes(meta.highlight) ? (
               <>
                 {meta.heading.split(meta.highlight)[0]}

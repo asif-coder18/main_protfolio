@@ -205,8 +205,7 @@ export function Projects() {
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.3 + i * 0.1 }}
               layout
-              className="group relative rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300"
-              style={{ backgroundColor: "#FFFFFF", border: "1px solid #E2E8F0" }}
+              className="group relative rounded-2xl border border-[var(--border)] bg-[var(--card)] overflow-hidden hover:border-indigo-500/30 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/5"
             >
               {/* Project image / hero */}
               <div
@@ -277,7 +276,7 @@ export function Projects() {
 
               {/* Content */}
               <div className="p-6">
-                <h3 className="text-lg font-bold mb-2 transition-colors duration-200" style={{ color: "#0F2747" }}>
+                <h3 className="text-lg font-bold text-[var(--foreground)] mb-2 group-hover:text-indigo-400 transition-colors duration-200">
                   {project.title}
                 </h3>
                 <p className="text-sm text-[var(--muted)] leading-relaxed mb-4">
@@ -303,8 +302,7 @@ export function Projects() {
                       href={project.live}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 text-sm font-medium transition-colors duration-200"
-                      style={{ color: "#2563EB" }}
+                      className="flex items-center gap-1.5 text-sm text-[var(--muted)] hover:text-indigo-400 transition-colors duration-200"
                     >
                       <ExternalLink size={14} />
                       Live Demo

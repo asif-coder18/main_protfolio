@@ -122,11 +122,10 @@ export function Contact() {
   };
 
   const inputClass =
-    "w-full px-4 py-3 rounded-xl border text-sm focus:outline-none focus:ring-2 transition-all duration-200"
-    + " bg-white text-gray-800 placeholder-gray-400 border-gray-200 focus:border-blue-500 focus:ring-blue-500/20";
+    "w-full px-4 py-3 rounded-xl border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] text-sm focus:outline-none focus:border-indigo-500/60 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200";
 
   return (
-    <section id="contact" className="py-24 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: "#0F2747" }}>
+    <section id="contact" className="py-24 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto" ref={ref}>
         {/* Header */}
         <motion.div
@@ -135,13 +134,13 @@ export function Contact() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <span className="text-blue-300 text-sm font-semibold tracking-widest uppercase mb-3 block">
+          <span className="text-indigo-400 text-sm font-semibold tracking-widest uppercase mb-3 block">
             Contact
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4" style={{ color: "#FFFFFF" }}>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
             Let&apos;s <span className="gradient-text">Work Together</span>
           </h2>
-          <p className="max-w-2xl mx-auto text-lg" style={{ color: "#FFFFFF99" }}>
+          <p className="text-[var(--muted)] max-w-2xl mx-auto text-lg">
             Have a project in mind or just want to say hi? My inbox is always open.
           </p>
         </motion.div>
@@ -155,30 +154,30 @@ export function Contact() {
             className="lg:col-span-2 space-y-6"
           >
             {/* Quick info */}
-            <div className="p-6 rounded-2xl border space-y-4" style={{ backgroundColor: "rgba(255,255,255,0.07)", borderColor: "rgba(255,255,255,0.15)" }}>
-              <h3 className="font-bold text-lg" style={{ color: "#FFFFFF" }}>
+            <div className="p-6 rounded-2xl border border-[var(--border)] bg-[var(--card)] space-y-4">
+              <h3 className="font-bold text-[var(--foreground)] text-lg">
                 Get in touch
               </h3>
               <div className="space-y-3">
                 {data.address && (
-                  <div className="flex items-center gap-3 text-sm" style={{ color: "#FFFFFF99" }}>
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: "rgba(255,255,255,0.1)" }}>
-                      <MapPin size={14} className="text-blue-300" />
+                  <div className="flex items-center gap-3 text-sm text-[var(--muted)]">
+                    <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center flex-shrink-0">
+                      <MapPin size={14} className="text-indigo-400" />
                     </div>
                     {data.address}
                   </div>
                 )}
                 {data.responseTime && (
-                  <div className="flex items-center gap-3 text-sm" style={{ color: "#FFFFFF99" }}>
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: "rgba(255,255,255,0.1)" }}>
-                      <Clock size={14} className="text-blue-300" />
+                  <div className="flex items-center gap-3 text-sm text-[var(--muted)]">
+                    <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center flex-shrink-0">
+                      <Clock size={14} className="text-indigo-400" />
                     </div>
                     {data.responseTime}
                   </div>
                 )}
                 {data.availableForWork && (
-                  <div className="flex items-center gap-3 text-sm" style={{ color: "#FFFFFF99" }}>
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: "rgba(255,255,255,0.1)" }}>
+                  <div className="flex items-center gap-3 text-sm text-[var(--muted)]">
+                    <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center flex-shrink-0">
                       <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
                     </div>
                     Available for new projects
@@ -189,8 +188,8 @@ export function Contact() {
 
             {/* Social links */}
             {data.socialLinks && data.socialLinks.length > 0 && (
-              <div className="p-6 rounded-2xl border space-y-3" style={{ backgroundColor: "rgba(255,255,255,0.07)", borderColor: "rgba(255,255,255,0.15)" }}>
-                <h3 className="font-bold text-base mb-4" style={{ color: "#FFFFFF" }}>
+              <div className="p-6 rounded-2xl border border-[var(--border)] bg-[var(--card)] space-y-3">
+                <h3 className="font-bold text-[var(--foreground)] text-base mb-4">
                   Find me on
                 </h3>
                 {data.socialLinks.map((social, i) => {
@@ -208,8 +207,7 @@ export function Contact() {
                       initial={{ opacity: 0, x: -20 }}
                       animate={isInView ? { opacity: 1, x: 0 } : {}}
                       transition={{ duration: 0.5, delay: 0.4 + i * 0.1 }}
-                      className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-200 group`}
-                      style={{ border: "1px solid rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.7)" }}
+                      className={`flex items-center gap-3 p-3 rounded-xl border border-[var(--border)] text-[var(--muted)] ${social.color} hover:border-indigo-500/30 hover:bg-indigo-500/5 transition-all duration-200 group`}
                       whileHover={{ x: 4 }}
                     >
                       <Icon
@@ -218,10 +216,10 @@ export function Contact() {
                         className="flex-shrink-0 group-hover:scale-110 transition-transform duration-200"
                       />
                       <div>
-                        <div className="text-xs font-semibold" style={{ color: "#FFFFFF" }}>
+                        <div className="text-xs font-semibold text-[var(--foreground)]">
                           {social.label}
                         </div>
-                        <div className="text-xs" style={{ color: "rgba(255,255,255,0.6)" }}>{social.username}</div>
+                        <div className="text-xs">{social.username}</div>
                       </div>
                     </motion.a>
                   );
@@ -237,8 +235,8 @@ export function Contact() {
             transition={{ duration: 0.7, delay: 0.3 }}
             className="lg:col-span-3"
           >
-            <div className="p-8 rounded-2xl" style={{ backgroundColor: "#FFFFFF", border: "1px solid rgba(255,255,255,0.2)" }}>
-              <h3 className="font-bold text-xl mb-6" style={{ color: "#0F2747" }}>
+            <div className="p-8 rounded-2xl border border-[var(--border)] bg-[var(--card)]">
+              <h3 className="font-bold text-[var(--foreground)] text-xl mb-6">
                 Send a message
               </h3>
 
@@ -347,8 +345,7 @@ export function Contact() {
                   <motion.button
                     type="submit"
                     disabled={formState === "loading"}
-                    className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold text-sm transition-colors duration-200"
-                  style={{ backgroundColor: "#2563EB" }}
+                    className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold text-sm transition-colors duration-200"
                     whileHover={
                       formState !== "loading" ? { scale: 1.02, y: -1 } : {}
                     }
