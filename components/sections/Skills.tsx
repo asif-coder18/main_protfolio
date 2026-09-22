@@ -37,7 +37,7 @@ const defaultTechIcons: TechIcon[] = [
   { name: "JavaScript", bg: "bg-yellow-500/10", text: "text-yellow-400", symbol: "logos:javascript", order: 2 },
   { name: "TypeScript", bg: "bg-blue-600/10", text: "text-blue-500", symbol: "logos:typescript-icon", order: 3 },
   { name: "React", bg: "bg-cyan-500/10", text: "text-cyan-400", symbol: "logos:react", order: 4 },
-  { name: "Next.js", bg: "bg-gray-500/10", text: "text-gray-300", symbol: "logos:nextjs-icon", order: 5 },
+  { name: "Next.js", bg: "bg-gray-500/10", text: "text-[var(--muted)]", symbol: "logos:nextjs-icon", order: 5 },
   { name: "Tailwind", bg: "bg-teal-500/10", text: "text-teal-400", symbol: "logos:tailwindcss-icon", order: 6 },
   { name: "Git", bg: "bg-red-500/10", text: "text-red-400", symbol: "logos:git-icon", order: 7 },
 ];

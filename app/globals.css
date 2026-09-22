@@ -8,6 +8,7 @@
   --muted: #6b7280;
   --border: #e5e7eb;
   --card: #f9fafb;
+  color-scheme: light;
 }
 
 .dark {
@@ -18,6 +19,7 @@
   --muted: #9ca3af;
   --border: #1f2937;
   --card: #111827;
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -72,15 +74,15 @@ body {
 
 /* Glassmorphism utility */
 .glass {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.03);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .dark .glass {
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Gradient text */

@@ -333,7 +333,7 @@ export function LoadingScreen() {
                   setLoading(false);
                   sessionStorage.setItem("portfolio-loaded", "true");
                 }}
-                className="text-xs text-[var(--muted)] hover:text-white transition-colors"
+                className="text-xs text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
               >
                 Skip →
               </motion.button>

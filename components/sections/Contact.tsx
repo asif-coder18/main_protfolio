@@ -39,7 +39,7 @@ const defaultData: ContactInfoData = {
   responseTime: "Usually responds within 24 hours",
   availableForWork: true,
   socialLinks: [
-    { label: "GitHub", href: "https://github.com/asif-coder18", username: "@asif-coder18", color: "hover:text-gray-300", icon: "github" },
+    { label: "GitHub", href: "https://github.com/asif-coder18", username: "@asif-coder18", color: "hover:text-indigo-400", icon: "github" },
     { label: "LinkedIn", href: "https://www.linkedin.com/feed/", username: "Asiful Maula Abir", color: "hover:text-blue-400", icon: "linkedin" },
     { label: "Email", href: "mailto:maulaasiful@gmail.com", username: "maulaasiful@gmail.com", color: "hover:text-indigo-400", icon: "mail" },
   ],
