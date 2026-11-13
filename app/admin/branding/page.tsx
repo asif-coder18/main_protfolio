@@ -61,6 +61,7 @@ export default function BrandingPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(settings),
       });
+      const data = await res.json();
       if (res.ok) {
         success("Success", "Branding & Favicon settings updated successfully!");
         // Dynamically update link[rel="icon"] immediately
@@ -74,10 +75,12 @@ export default function BrandingPage() {
           link.href = settings.favicon;
         }
       } else {
-        error("Error", "Failed to update branding settings");
+        console.error("Branding save error response:", data);
+        error("Error", data?.error || `Save failed (HTTP ${res.status})`);
       }
     } catch (err) {
-      error("Error", "An error occurred");
+      console.error("Branding save exception:", err);
+      error("Error", "An error occurred: " + (err instanceof Error ? err.message : String(err)));
     } finally {
       setSaving(false);
     }
