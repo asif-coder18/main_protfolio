@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDatabases, DATABASE_ID, COLLECTIONS, Query } from "@/lib/appwrite";
 import { requireAuth, unauthorizedResponse } from "@/lib/auth";
-import bcrypt from "bcryptjs";
+import {
+  AdminCredentialDocument,
+  hashAdminPassword,
+  verifyAdminPassword,
+} from "@/lib/admin-credentials";
 
 // PUT /api/auth/credentials — change username and/or password
 export async function PUT(req: NextRequest) {
@@ -29,19 +33,15 @@ export async function PUT(req: NextRequest) {
       Query.limit(1),
     ]);
 
-    const adminDoc = result.documents[0] as unknown as {
-      $id: string;
-      username: string;
-      passwordHash: string;
-    } | undefined;
+    const adminDoc = result.documents[0] as unknown as AdminCredentialDocument | undefined;
 
     if (!adminDoc) {
       return NextResponse.json({ error: "Admin account not found." }, { status: 404 });
     }
 
     // Verify current password
-    const valid = await bcrypt.compare(currentPassword, adminDoc.passwordHash);
-    if (!valid) {
+    const verification = await verifyAdminPassword(currentPassword, adminDoc);
+    if (!verification.valid) {
       return NextResponse.json({ error: "Current password is incorrect." }, { status: 401 });
     }
 
@@ -62,7 +62,9 @@ export async function PUT(req: NextRequest) {
       update.username = newUsername;
     }
     if (newPassword) {
-      update.passwordHash = await bcrypt.hash(newPassword, 12);
+      update.passwordHash = await hashAdminPassword(newPassword);
+    } else if (verification.needsMigration) {
+      update.passwordHash = await hashAdminPassword(currentPassword);
     }
 
     if (Object.keys(update).length === 0) {
